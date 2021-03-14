@@ -11,8 +11,6 @@ export default function RegisterScreen(props) {
   const [confirmEmail, setConfirmEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isReferer, setIsReferer] = useState('NO')
-  const [referer, setReferer] = useState('')
 
   const redirect = props.location.search
     ? props.location.search.split('=')[1]
@@ -37,7 +35,8 @@ export default function RegisterScreen(props) {
          It should be register(username, email, password, phone, cf)
       */
       let cf = ''
-      email.split('').forEach( l => cf += l.charCodeAt(0)) //todo: 
+      email.split('').forEach( l => cf += l.charCodeAt(0))
+      console.log("cf", cf)
       dispatch(register(username, email, password, email, cf));
     }
   };
@@ -51,6 +50,10 @@ export default function RegisterScreen(props) {
       <form className="form" onSubmit={submitHandler}>
         <div>
           <h1 className="row center">Crea il tuo Account </h1>
+        </div>
+        {loading && <LoadingBox></LoadingBox>}
+        {error && <MessageBox variant="danger">{error}</MessageBox>}
+        <div>
           <label htmlFor="username">Username *</label>
           <input
             type="text"
@@ -84,7 +87,7 @@ export default function RegisterScreen(props) {
           <label htmlFor="password">Password *</label>
           <input
             type="password"
-            id="password"
+            id="ConfirmPassword"
             placeholder="Inserisci password"
             required
             onChange={(e) => setPassword(e.target.value)}
@@ -100,55 +103,9 @@ export default function RegisterScreen(props) {
             onChange={(e) => setConfirmPassword(e.target.value)}
           ></input>
         </div>
+        <div><p className="asterisk">(*) Campi Obbligatori</p></div>
         <div>
-          {
-            isReferer==='NO'?
-              (
-                <div className="row start">
-                  <label htmlFor="isReferer">Partecipi in un ente del terzo settore?
-                    <input
-                      type="radio"
-                      id="no_referer"
-                      name="referer"
-                      value="SI"
-                      onClick={ (e) => setIsReferer(e.target.value)}
-                    />Si
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      id="yes_referer"
-                      name="referer"
-                      value="NO"
-                      defaultChecked
-                      onClick={ (e) => {
-                        setReferer(e.target.value)
-                      }}
-                    />No
-                  </label>
-                </div>):
-              (
-                <div>
-                  <label htmlFor="referer" className="row center">Ente del terzo settore al qualle partecipi *</label>
-                  <div className="row">
-                    <input
-                      type="text"
-                      id="referer"
-                      placeholder="Inserici l'ente del terzo settore al qualle partecipi"
-                      required
-                      onChange={(e) => setReferer(e.target.value)}
-                    ></input>
-                  </div>
-                </div>
-              )
-          }
-        </div>
-        <div>
-          {loading && <LoadingBox></LoadingBox>}
-          {error && <MessageBox variant="danger">{error}</MessageBox>}
-        </div>
-        <div>
-          <div><p className="asterisk">(*) Campi Obbligatori</p></div>
+          <label />
           <button className="primary blu big" type="submit">
             Registrati
           </button>

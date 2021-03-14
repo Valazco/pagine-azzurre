@@ -87,7 +87,7 @@ export default function ProfileScreen() {
         setSellerDescription(user.seller.description);
       }
     }
-  }, [dispatch, userInfo._id, user, userInfo]);
+  }, [dispatch, userInfo._id, user]);
   const submitHandler = (e) => {
     e.preventDefault();
     // dispatch update profile
@@ -123,7 +123,7 @@ export default function ProfileScreen() {
         <div>
           <h1 className="row center">User Profile</h1>
         </div>
-        { loading ? (
+        {loading ? (
           <LoadingBox></LoadingBox>
         ) : error ? (
           <MessageBox variant="danger">{error}</MessageBox>
@@ -157,6 +157,7 @@ export default function ProfileScreen() {
                 placeholder="Aggiungere nome"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                
               ></input>
             </div>
             <div>
@@ -323,26 +324,12 @@ export default function ProfileScreen() {
                 </div>
               </>
             )}
-            <div className="asterisk">
+            <div>
               <div className="little-line">(**)  Campo non modificabile</div>
               <div className="little-sisterline">(*) Campi obbligatori per offrire beni o servizi su le pagine azzurre</div>
             </div>
-            <>
-              {
-              loading ? (
-                <LoadingBox></LoadingBox>
-              ) : error ? (
-                <MessageBox variant="danger">{error}</MessageBox>
-              ) : loadingUpdate && <LoadingBox></LoadingBox> ?
-                  errorUpdate && <MessageBox variant="danger">{errorUpdate}</MessageBox> :
-                  successUpdate && (
-                    <MessageBox variant="success">
-                      Profile Updated Successfully
-                    </MessageBox>
-                  )
-                } 
-            </>
             <div>
+              <label />
               <button className="primary blu big" type="submit">
                 Aggiorna Profilo
               </button>
