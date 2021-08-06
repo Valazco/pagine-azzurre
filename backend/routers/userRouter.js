@@ -81,75 +81,104 @@ userRouter.post(
   '/register',
   expressAsyncHandler(async (req, res) => {
     let subscriber = false
+    let createdUser
     let recipient
     const userPassword = bcrypt.hashSync(req.body.password, 8)
     const userAccount = await web3.eth.accounts.create((userPassword + process.env.ENTROPY))
-    const user = new User({
-      account: userAccount.address,
-      accountKey: userAccount.privateKey,
-      username: req.body.username,
-      cf: req.body.cf,
-      email: req.body.email,
-      phone: req.body.phone,
-      password: userPassword,
-      seller: { name: req.body.sellername },
-      referer: req.body.referer,
-      isSeller: true,
-      hasAd: false,
-    })
-    const createdUser = await user.save()
-    if (req.body.newsletter === true){
-      subscriber = await Newsletter.find({ email: req.body.email })
-      if (!subscriber.email) {
-        const newsletterRegistry = new Newsletter({ email: req.body.email, verified: true })
-        await newsletterRegistry.save()
-        recipient = msgRegistration(createdUser.email, createdUser.username, true)
+    const isUser = await User.findOne({ email: req.body.email })
+    const isUsername = await User.findOne({ username: req.body.username })
+    if(!isUser && !isUsername){
+      const user = new User({
+        account: userAccount.address,
+        accountKey: userAccount.privateKey,
+        username: req.body.username,
+        cf: req.body.cf,
+        email: req.body.email,
+        phone: req.body.phone,
+        password: userPassword,
+        seller: { name: req.body.sellername },
+        referer: req.body.referer,
+        isSeller: true,
+        hasAd: false,
+      })
+      createdUser = await user.save()
+      if ( createdUser.email === req.body.email ) {
+        if (req.body.newsletter) {
+          subscriber = await Newsletter.findOne({ email: req.body.email })
+          if (!subscriber) {
+            const newsletterRegistry = new Newsletter({ email: req.body.email, verified: true })
+            await newsletterRegistry.save()
+            recipient = msgRegistration(createdUser.email, createdUser.username, true)
+          } else {
+            recipient = msgRegistration(createdUser.email, createdUser.username, true)
+          }
+        } else {
+          recipient = msgRegistration(createdUser.email, createdUser.username, false)
+        }
+        if(subscriber){
+          res.send({
+            _id: createdUser._id,
+            account: createdUser.account,
+            username: createdUser.username,
+            email: createdUser.email,
+            phone: createdUser.email,
+            cf: createdUser.email,
+            isSeller: createdUser.isSeller,
+            hasAd: createdUser.hasAd,
+            referer: createdUser.referer,
+            newsletter: true,
+            token: generateToken(createdUser)
+          })
+        } else {
+          res.send({
+            _id: createdUser._id,
+            account: createdUser.account,
+            username: createdUser.username,
+            email: createdUser.email,
+            phone: createdUser.email,
+            cf: createdUser.email,
+            isSeller: createdUser.isSeller,
+            hasAd: createdUser.hasAd,
+            referer: createdUser.referer,
+            newsletter: false,
+            token: generateToken(createdUser),
+          })
+        }
+        sgMail.send(recipient)
+        .then((res) => {
+          console.log("Welcome email Sent.")
+        })
+        .catch((error) => {console.error(error)})
+      } else {
+        res.status(500)
       }
+      console.log("Created User: ", createdUser)
     } else {
-      recipient = msgRegistration(createdUser.email, createdUser.username, false)
+      if(isUser) {
+        res.status(500).send({ message : "Indirizzo già in uso" })
+      } else if (isUsername) {
+        res.status(500).send({ message : "Username già in uso" })
+      } else {
+        res.status(500).send({ message : "Errore in registrazione" })
+      }
     }
-    sgMail.send(recipient)
-      .then((res) => {
-        console.log("Welcome email Sent.")
-      })
-      .catch((error) => {console.error(error)})
-    if(subscriber){
-      res.send({
-        _id: createdUser._id,
-        account: createdUser.account,
-        username: createdUser.username,
-        email: createdUser.email,
-        phone: createdUser.email,
-        cf: createdUser.email,
-        isSeller: createdUser.isSeller,
-        hasAd: createdUser.hasAd,
-        referer: createdUser.referer,
-        newsletter: true,
-        token: generateToken(createdUser)
-      })
-    } else {
-      res.send({
-        _id: createdUser._id,
-        account: createdUser.account,
-        username: createdUser.username,
-        email: createdUser.email,
-        phone: createdUser.email,
-        cf: createdUser.email,
-        isSeller: createdUser.isSeller,
-        hasAd: createdUser.hasAd,
-        referer: createdUser.referer,
-        newsletter: false,
-        token: generateToken(createdUser),
-      })
-    }
-  }))
+  })
+)
 
 userRouter.get(
   '/:id',
   expressAsyncHandler(async (req, res) => {
+    let userData = {}
     const user = await User.findById(req.params.id);
+    userData = {...user._doc}
     if (user) {
-      res.send(user);
+      const verifyNewsletter = await Newsletter.findOne({ email: user.email })
+      if(verifyNewsletter && verifyNewsletter.verified) { 
+        Object.assign( userData, { newsletter : "Verified" } )
+      } else {
+        Object.assign( userData, { newsletter : "Not Verified" } )
+      }
+      res.send(userData)
     } else {
       res.status(404).send({ message: 'User Not Found' });
     }
@@ -386,12 +415,20 @@ userRouter.post(
   })
 );
 
+userRouter.get(
+  '/newsletter/:email',
+  expressAsyncHandler(async (req, res) => {
+    const email = req.url.split('/')[2]
+    let subscriber = await Newsletter.findOne({ email })
+    return subscriber.verified
+  })
+)
+
 userRouter.post(
   '/newsletter',
   expressAsyncHandler(async (req, res) => {
     let subscriber = await Newsletter.findOne({ email: req.body.email })
     if (!subscriber) {
-      console.log(req.body.email, subscriber)
       let recipient = newsletterWelcome( req.body.email, req.body.name)
       subscriber = new Newsletter({
         name: req.body.name,
@@ -434,6 +471,25 @@ userRouter.post(
     } else {
       res.status(404).send({ message: 'Process has failed' })
     }
+  })
+)
+
+userRouter.post(
+  '/newsletterUpdate',
+  expressAsyncHandler(async (req, res) => {
+    let subscriber = await Newsletter.find({ email: req.body.email })
+    if(subscriber[0]) {
+      subscriber[0].verified = !subscriber[0].verified
+      subscriber[0].save()
+    } else {
+      subscriber = new Newsletter({
+        name: req.body.username,
+        email: req.body.email,
+        verified: true
+      })
+      await subscriber.save()
+    }
+    res.status(200).send('yeah!')
   })
 )
 

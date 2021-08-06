@@ -37,6 +37,7 @@ import {
   userPasswordReplacementReducer,
   userNewsletterReducer,
   userNewsletterVerifyReducer,
+  userNewsletterUpdateReducer,
 } from './reducers/userReducers';
 
 const initialState = {
@@ -92,6 +93,7 @@ const reducer = combineReducers({
   userPasswordReplacement: userPasswordReplacementReducer,
   userNewsletter: userNewsletterReducer,
   userNewsletterVerify: userNewsletterVerifyReducer,
+  userNewsletterUpdate: userNewsletterUpdateReducer,
 });
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(

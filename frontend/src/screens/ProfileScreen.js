@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { detailsUser, updateUserProfile } from '../actions/userActions';
+import { detailsUser, updateUserProfile, updateNewsletter } from '../actions/userActions';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants';
@@ -36,9 +36,10 @@ export default function ProfileScreen() {
   const [hasReferer, setHasReferer] = useState(false)
   const [partitaIva, setPartitaIva] = useState('')
   const [sellerLink, setSellerLink] = useState('')
-
+  const [newsletter, setNewsletter] = useState('')
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [errorUpload, setErrorUpload] = useState('');
+  const [newsletterUpdate, setNewsletterUpdate] = useState(false)
 
   function parseDate(str, format, locale) {
     const parsed = dateFnsParse(str, format, new Date(), { locale });
@@ -73,12 +74,6 @@ export default function ProfileScreen() {
     }
   };
 
-  // const options = [
-  //   { value: 'chocolate', label: 'Chocolate' },
-  //   { value: 'strawberry', label: 'Strawberry' },
-  //   { value: 'vanilla', label: 'Vanilla' }
-  // ]
-
   const GetFormattedDate = (birthday) => {
     if (typeof birthday === 'object') {
       var day = birthday.getDate()
@@ -103,6 +98,7 @@ export default function ProfileScreen() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     // TODO: For security reasons split db
     if (!user) {
       dispatch({ type: USER_UPDATE_PROFILE_RESET });
@@ -121,6 +117,7 @@ export default function ProfileScreen() {
       setPhone(user.phone);
       setEmail(user.email);
       setReferer(user.referer)
+      setNewsletter(user.newsletter)
       if (typeof parseInt(user.partitaIva) === 'number' ) setPartitaIva(user.partitaIva)
       if (user.seller) {
         setSellerName(user.seller.name);
@@ -159,6 +156,9 @@ export default function ProfileScreen() {
           sellerLink,
         })
       );
+    }
+    if(newsletterUpdate){
+      dispatch(updateNewsletter(username, email))
     }
   };
 
@@ -376,6 +376,20 @@ export default function ProfileScreen() {
                     </div>
                   ):''
               }
+            </div>
+            <div>
+              <h2>Inscrizione Newsletter:</h2>
+              {newsletter === "Verified" ? <MessageBox variant="success">Inscritto</MessageBox>  : <MessageBox variant="info">Non inscritto</MessageBox> }
+            </div>
+            <div className="row start">
+                <label htmlFor="newsletter">{newsletter === "Not Verified" ? "Vuoi inscriverti alla nostra newsletter" : "Vuoi annullare l'iscrizione alla nostra newsletter"}
+                  <input
+                    type="radio"
+                    id="no_referer"
+                    name="newsletter"
+                    onClick={ (e) => setNewsletterUpdate(true)}
+                  />Si
+                </label>
             </div>
             {user.isSeller && (
               <>

@@ -15,6 +15,7 @@ export default function CartScreen(props) {
   const { cartItems, error } = cart;
   const dispatch = useDispatch();
   useEffect(() => {
+    window.scrollTo(0, 0)
     if (productId) {
       dispatch(addToCart(productId, qty));
     }
@@ -44,7 +45,7 @@ export default function CartScreen(props) {
                 <div className="row">
                   <div>
                     <img
-                      src={item.image}
+                      src={item.image[0]}
                       alt={item.name}
                       className="small"
                     ></img>

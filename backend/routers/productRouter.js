@@ -3,12 +3,24 @@ import expressAsyncHandler from 'express-async-handler';
 import data from '../data.js';
 import Product from '../models/productModel.js';
 import { isAdmin, isAuth, isSellerOrAdmin } from '../utils.js';
+import { citiesList } from '../utils.js';
 
 const productRouter = express.Router();
 
 productRouter.get(
   '/',
   expressAsyncHandler(async (req, res) => {
+    let city = []
+    req.query.name.split(' ').forEach( word => {
+      if(citiesList.includes(word)) {
+        city.push(word)
+      }
+    })
+    let query = req.query.name
+    if(city.length > 0) {
+      query = query.replace(city[0], '')
+      city[0] = city[0].toUpperCase()
+    }
     const pageSize = 100;
     const page = Number(req.query.pageNumber) || 1;
     const name = req.query.name || '';
@@ -24,7 +36,8 @@ productRouter.get(
         ? Number(req.query.rating)
         : 0;
 
-    const nameFilter = name ? { name: { $regex: name, $options: 'i' } } : {};
+    const nameFilter = name ? { name: { $regex: query.trim(), $options: 'i' } } : {};
+    const literalFilter = name ? { name: { $regex: req.query.name, $options: 'i' } } : {};
     const sellerFilter = seller ? { seller } : {};
     const categoryFilter = category ? { category } : {};
     const priceFilter = min && max ? { price: { $gte: min, $lte: max } } : {};
@@ -37,14 +50,14 @@ productRouter.get(
         : order === 'toprated'
         ? { rating: -1 }
         : { _id: -1 };
-    const count = await Product.count({
+    const count = await Product.countDocuments({
       ...sellerFilter,
       ...nameFilter,
       ...categoryFilter,
       ...priceFilter,
       ...ratingFilter,
     });
-    const products = await Product.find({
+    let products = await Product.find({
       ...sellerFilter,
       ...nameFilter,
       ...categoryFilter,
@@ -55,6 +68,36 @@ productRouter.get(
       .sort(sortOrder)
       .skip(pageSize * (page - 1))
       .limit(pageSize);
+    const literal = await Product.find({
+        ...sellerFilter,
+        ...literalFilter,
+        ...categoryFilter,
+        ...priceFilter,
+        ...ratingFilter,
+      })
+        .populate('seller', 'seller.name seller.logo')
+        .sort(sortOrder)
+        .skip(pageSize * (page - 1))
+        .limit(pageSize);
+        
+    var filtred = []
+    if(name !== '' && literal.length > 0 && city.length > 0) {
+      for(const i in literal){
+        for(const y in products){
+          if(JSON.stringify(products[y]._id) === JSON.stringify(literal[i]._id) ){
+            filtred.unshift(JSON.stringify(literal[i]._id))
+          }
+          if(products[y].city != city[0]) {
+            delete products[y]
+          }
+        }
+      }
+      console.log("filtred:", filtred)
+      for(const i in literal){
+        console.log(filtred.includes(JSON.stringify(literal[i]._id)))
+        if(!filtred.includes(JSON.stringify(literal[i]._id))) products.unshift(literal[i])
+      }
+    }
     res.send({ products, page, pages: Math.ceil(count / pageSize) });
   })
 );
@@ -127,22 +170,22 @@ productRouter.put(
     const productId = req.params.id;
     const product = await Product.findById(productId);
     if (product) {
-      if(req.body.image === '/images/offro_prodotto.jpg' && req.body.section === 'offro') {
+      if(req.body.image[0] === ['/images/offro_prodotto.jpg'] && req.body.section === 'offro') {
         if (req.body.isService){
-          product.image = '/images/offro_servizio.jpg'
+          product.image = ['/images/offro_servizio.jpg']
         } else {
-          product.image = '/images/offro_prodotto.jpg'
+          product.image = ['/images/offro_prodotto.jpg']
         }
-      } else if (req.body.image === '/images/offro_prodotto.jpg' && req.body.section === 'cerco') {
+      } else if (req.body.image[0] === ['/images/offro_prodotto.jpg'] && req.body.section === 'cerco') {
         if (req.body.isService){
-          product.image = '/images/cerco_servizio.jpg'
+          product.image = ['/images/cerco_servizio.jpg']
         } else {
-          product.image = '/images/cerco_prodotto.jpg'
+          product.image = ['/images/cerco_prodotto.jpg']
         }
-      } else if(req.body.image === '/images/offro_prodotto.jpg' && req.body.section === 'avviso') {
-        product.image = '/images/avviso.jpg'
-      } else if(req.body.image === '/images/offro_prodotto.jpg' && req.body.section === 'propongo') {
-        product.image = '/images/propongo.jpg'
+      } else if(req.body.image[0] === ['/images/offro_prodotto.jpg'] && req.body.section === 'avviso') {
+        product.image = ['/images/avviso.jpg']
+      } else if(req.body.image[0] === ['/images/offro_prodotto.jpg'] && req.body.section === 'propongo') {
+        product.image = ['/images/propongo.jpg']
       } else {
         product.image = req.body.image
       }

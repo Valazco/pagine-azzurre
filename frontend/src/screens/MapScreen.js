@@ -23,6 +23,7 @@ export default function MapScreen(props) {
   const markerRef = useRef(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     const fetch = async () => {
       const { data } = await Axios('/api/config/google');
       setGoogleApiKey(data);

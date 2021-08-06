@@ -26,6 +26,7 @@ export default function UserEditScreen(props) {
 
   const dispatch = useDispatch();
   useEffect(() => {
+    window.scrollTo(0, 0)
     if (successUpdate) {
       dispatch({ type: USER_UPDATE_RESET });
       props.history.push('/userlist');

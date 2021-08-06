@@ -31,8 +31,12 @@ body {
   width: auto;
 }
 
-.flash {
-  padding: 4rem;
+.flash { /* Good for: home */
+  padding-top: 2rem;
+}
+
+.flash2 { /* Good for: home */
+  padding-top: 4.5rem;
 }
 
 /* Layout */
@@ -206,8 +210,12 @@ button.small {
   margin-top: 0.3rem;
 }
 
-.little-line a{
+.little-line a {
   padding-left: 1.4rem;
+}
+
+.image_input {
+  margin-bottom: 0.5rem;
 }
 
 /* .demoWrapper {
@@ -363,6 +371,15 @@ img.large {
 }
 .emoji {
   margin: 0 0.5rem;
+}
+
+.product_edit_img {
+  display: block;
+  max-width: 115px;
+  max-height: 115px;
+  width: auto;
+  height: auto;
+  margin: 8px 0;
 }
 
 /* Card */
@@ -742,40 +759,58 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-.example1 {
-  position: absolute;
+.marquee {
+  height: 2rem;
+  overflow: hidden;
+  position: relative;
+  background: #fefefe;
+}
+
+.marquee p {
+  position: relative;
+  width: 100vw;
+  margin: 0;
+  color: #2196F3;
+  line-height: 2.2rem;
   text-align: center;
-  background-color: transparent;
-  /* Starting position */
-  -moz-transform:translateX(100%);
-  -webkit-transform:translateX(100%);	
-  transform:translateX(100%);
-  /* Apply animation to this element */	
-  -moz-animation: example1 15s linear infinite;
-  -webkit-animation: example1 15s linear infinite;
-  animation: example1 15s linear infinite;
- }
- /* Move it (define the animation) */
- @-moz-keyframes example1 {
-  0%   { -moz-transform: translateX(100%); }
-  100% { -moz-transform: translateX(-100%); }
- }
- @-webkit-keyframes example1 {
-  0%   { -webkit-transform: translateX(100%); }
-  100% { -webkit-transform: translateX(-100%); }
- }
- @keyframes example1 {
-  0%   { 
-  -moz-transform: translateX(100%); /* Firefox bug fix */
-  -webkit-transform: translateX(100%); /* Firefox bug fix */
-  transform: translateX(100%); 		
+  -moz-transform: translateX(100%);
+  -webkit-transform: translateX(100%);
+  transform: translateX(100%);
+  -moz-animation: scroll-left 2s linear infinite;
+  -webkit-animation: scroll-left 2s linear infinite;
+  animation: scroll-left 20s linear infinite;
+}
+
+@-moz-keyframes scroll-left {
+  0% {
+      -moz-transform: translateX(100%);
   }
-  100% { 
-  -moz-transform: translateX(-100%); /* Firefox bug fix */
-  -webkit-transform: translateX(-100%); /* Firefox bug fix */
-  transform: translateX(-100%); 
+  100% {
+      -moz-transform: translateX(-100%);
   }
- }
+}
+
+@-webkit-keyframes scroll-left {
+  0% {
+      -webkit-transform: translateX(100%);
+  }
+  100% {
+      -webkit-transform: translateX(-100%);
+  }
+}
+
+@keyframes scroll-left {
+  0% {
+      -moz-transform: translateX(100%);
+      -webkit-transform: translateX(100%);
+      transform: translateX(100%);
+  }
+  100% {
+      -moz-transform: translateX(-100%);
+      -webkit-transform: translateX(-100%);
+      transform: translateX(-100%);
+  }
+}
 
 @media screen and (max-width: 1450px){
   .Logo1 {
@@ -833,6 +868,11 @@ input:checked + .slider:before {
 }
 
 @media screen and (max-width: 540px){
+
+  .html {
+    width: 100vw;
+  }
+
   .grid-container {
     display: grid;
     grid-template-areas:
@@ -847,13 +887,17 @@ input:checked + .slider:before {
     height: 100%;
   }
 
+  .main {
+    padding: 100px;
+  }
+
   .post-header {
     height: 6rem;
     text-align: center;
   }
 
-  h1.row.center {
-    margin: 2rem auto 0;
+  h1.row.center { /* Good for: home, tutti_noi. */
+    margin: 3rem auto 0;
     text-align: center;
     font-size: 1.5rem;
   }
@@ -864,20 +908,64 @@ input:checked + .slider:before {
     background-color: white;
   }
 
-  .example1 {
-    font-size: 0.7rem;
-    padding-top: 5px;
+  .marquee p {
+    line-height: 2rem;
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  .scheda {
+    background-color: #e3e3e4;
+    padding: 1rem;
+    margin: 1rem;
+    width: 80vw;
+    display: inline-flex;
+    height: 40vh;
+    font-size : 1.5rem;
+    overflow-x: scroll;
+    border-radius: 0.8rem;
+  }
+
+  .welcome {
+    padding: 0;
+    margin: 0;
+  }
+
+  .card-body {
     width: 100vw;
   }
 
+  #mailing {
+    width: 100vw;
+  }
+  
+  .scheda img {
+    width: 10vw;
+    margin: auto;
+  }
+  
+  .scheda p {
+    color: #000;
+  }
+
+  /* .row {
+    padding-top: 1rem;
+  } */
+
   h2.row.center {
-    padding: 0px;
+    padding: 0;
     margin-top: 0;
     text-align: center;
   }
 
-  .html {
-    width: 100vw;
+  .row.center > h1 {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+  }
+
+  .row.top {
+    padding-top: 10px;
   }
 
   .footer {

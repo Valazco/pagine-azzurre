@@ -10,6 +10,7 @@ export default function ThankYouScreen(props) {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     dispatch(verifyNewsletter(email));
   }, [dispatch]);
 

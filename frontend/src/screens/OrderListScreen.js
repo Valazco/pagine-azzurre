@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteOrder, listOrders } from '../actions/orderActions';
-import LoadingBox from '../components/LoadingBox';
-import MessageBox from '../components/MessageBox';
-import { ORDER_DELETE_RESET } from '../constants/orderConstants';
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { deleteOrder, listOrders } from '../actions/orderActions'
+import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
+import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
+import LoadingBox from '../components/LoadingBox'
+import MessageBox from '../components/MessageBox'
+import { ORDER_DELETE_RESET } from '../constants/orderConstants'
 
 export default function OrderListScreen(props) {
   const sellerMode = props.match.path.indexOf('/seller') >= 0;
@@ -20,6 +22,7 @@ export default function OrderListScreen(props) {
   const { userInfo } = userSignin;
   const dispatch = useDispatch();
   useEffect(() => {
+    window.scrollTo(0, 0)
     dispatch({ type: ORDER_DELETE_RESET });
     dispatch(listOrders({ seller: sellerMode ? userInfo._id : '' }));
   }, [dispatch, sellerMode, successDelete, userInfo._id]);
@@ -29,7 +32,7 @@ export default function OrderListScreen(props) {
     }
   };
   return (
-    <div>
+    <div className="flash">
       <h1>Ordini</h1>
       {loadingDelete && <LoadingBox></LoadingBox>}
       {errorDelete && <MessageBox variant="danger">{errorDelete}</MessageBox>}
@@ -38,32 +41,32 @@ export default function OrderListScreen(props) {
       ) : error ? (
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
-        <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>UTÈNTE</th>
-              <th>DATA</th>
-              <th>TOTAL</th>
-              <th>PAGATO</th>
-              <th>CONSEGNATO</th>
-              <th>DETTAGLI / CANCELLA</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>ID</Th>
+              <Th>UTÈNTE</Th>
+              <Th>DATA</Th>
+              <Th>TOTAL</Th>
+              <Th>PAGATO</Th>
+              <Th>CONSEGNATO</Th>
+              <Th>DETTAGLI / CANCELLA</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
             {orders.map((order) => (
-              <tr key={order._id}>
-                <td>{order._id}</td>
-                <td>{order.user.name}</td>
-                <td>{order.createdAt.substring(0, 10)}</td>
-                <td>{order.totalPriceVal && order.totalPriceEuro && '☯' + order.totalPriceVal.toFixed(2) + ' e €'+ order.totalPriceEuro.toFixed(2)}</td>
-                <td>{order.isPaid ? order.paidAt.substring(0, 10) : 'No'}</td>
-                <td>
+              <Tr key={order._id}>
+                <Td>{order._id}</Td>
+                <Td>{order.user.name}</Td>
+                <Td>{order.createdAt.substring(0, 10)}</Td>
+                <Td>{order.totalPriceVal && order.totalPriceEuro && '☯' + order.totalPriceVal.toFixed(2) + ' e €'+ order.totalPriceEuro.toFixed(2)}</Td>
+                <Td>{order.isPaid ? order.paidAt.substring(0, 10) : 'No'}</Td>
+                <Td>
                   {order.isDelivered
                     ? order.deliveredAt.substring(0, 10)
                     : 'No'}
-                </td>
-                <td>
+                </Td>
+                <Td>
                   <button
                     type="button"
                     className="small"
@@ -80,11 +83,11 @@ export default function OrderListScreen(props) {
                   >
                     Cancella
                   </button>
-                </td>
-              </tr>
+                </Td>
+              </Tr>
             ))}
-          </tbody>
-        </table>
+          </Tbody>
+        </Table>
       )}
     </div>
   );

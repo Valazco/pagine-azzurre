@@ -28,6 +28,7 @@ export default function ChangePassword(props){
   }
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     if(password_replacement) props.history.push('/signin')
   }, [password_replacement])
 

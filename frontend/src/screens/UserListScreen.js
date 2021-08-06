@@ -18,6 +18,7 @@ export default function UserListScreen(props) {
 
   const dispatch = useDispatch();
   useEffect(() => {
+    window.scrollTo(0, 0)
     dispatch(listUsers());
     dispatch({
       type: USER_DETAILS_RESET,

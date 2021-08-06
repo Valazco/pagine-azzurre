@@ -16,6 +16,7 @@ export default function Newsletter(){
   const { loading, subscribed, message } = userNewsletter
 
   const submitHandler = (e) => {
+    window.scrollTo(0, 0)
     e.preventDefault()
     dispatch(newsletter(name, email))
   }

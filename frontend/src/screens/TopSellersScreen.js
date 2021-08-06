@@ -22,6 +22,7 @@ export default function HomeScreen() {
   } = userTopSellersList;
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     dispatch(listProducts({}));
     dispatch(listTopSellers());
   }, [dispatch]);

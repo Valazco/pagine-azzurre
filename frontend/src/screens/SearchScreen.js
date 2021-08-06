@@ -29,6 +29,7 @@ export default function SearchScreen(props) {
     categories,
   } = productCategoryList;
   useEffect(() => {
+    window.scrollTo(0, 0)
     dispatch(
       listProducts({
         pageNumber,
@@ -79,7 +80,7 @@ export default function SearchScreen(props) {
       </div>
       <div className="row top">
         <div className="col-1">
-          <h3>Dipartimento</h3>
+          <h3>Categorie</h3>
           <div>
             {loadingCategories ? (
               <LoadingBox></LoadingBox>
@@ -153,7 +154,7 @@ export default function SearchScreen(props) {
               )}
               <div className="row center">
                 {products.map((product) => (
-                  <Product key={product._id} product={product}></Product>
+                  product !== null && <Product key={product._id} product={product}></Product>
                 ))}
               </div>
               <div className="row center pagination">

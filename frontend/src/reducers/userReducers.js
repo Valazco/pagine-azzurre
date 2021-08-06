@@ -47,6 +47,9 @@ import {
   USER_NEWSLETTER_VERIFICATION_REQUEST,
   USER_NEWSLETTER_VERIFICATION_SUCCESS,
   USER_NEWSLETTER_VERIFICATION_FAIL,
+  USER_NEWSLETTER_UPDATE_REQUEST,
+  USER_NEWSLETTER_UPDATE_SUCCESS,
+  USER_NEWSLETTER_UPDATE_FAIL,
 } from '../constants/userConstants'
 
 export const userPasswordRecoveryReducer = ( state = { email: '', loading: false }, action ) => {
@@ -244,6 +247,19 @@ export const userNewsletterVerifyReducer = ( state = {}, action) => {
     case USER_NEWSLETTER_VERIFICATION_SUCCESS:
       return { loading: false, name: action.payload }
     case USER_NEWSLETTER_VERIFICATION_FAIL:
+      return { loading: false, message: action.payload }
+    default:
+      return state
+  }
+}
+
+export const userNewsletterUpdateReducer = ( state = {}, action) => {
+  switch (action.type) {
+    case USER_NEWSLETTER_UPDATE_REQUEST:
+      return { loading: true }
+    case USER_NEWSLETTER_UPDATE_SUCCESS:
+      return { loading: false }
+    case USER_NEWSLETTER_UPDATE_FAIL:
       return { loading: false, message: action.payload }
     default:
       return state

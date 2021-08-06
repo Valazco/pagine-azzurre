@@ -24,7 +24,7 @@ export default function PlaceOrderScreen(props) {
     cart.cartItems.reduce((a, c) => a + c.qty * c.priceEuro, 0)
   );
   cart.shippingPrice = cart.itemsPrice > 100 ? toPrice(0) : toPrice(10);
-  cart.taxPrice = toPrice(0.15 * cart.itemsPrice);
+  // cart.taxPrice = toPrice(0.15 * cart.itemsPrice);
   cart.totalPriceVal = cart.itemsPriceVal;
   cart.totalPriceEuro = cart.itemsPriceEuro;
   const dispatch = useDispatch();
@@ -38,6 +38,7 @@ export default function PlaceOrderScreen(props) {
 
   };
   useEffect(() => {
+    window.scrollTo(0, 0)
     if (success) {
       props.history.push(`/order/${order._id}`);
       dispatch({ type: ORDER_CREATE_RESET, payload: order });
@@ -82,7 +83,7 @@ export default function PlaceOrderScreen(props) {
                       <div className="row">
                         <div>
                           <img
-                            src={item.image}
+                            src={item.image[0]}
                             alt={item.name}
                             className="small"
                           ></img>

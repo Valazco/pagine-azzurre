@@ -6,6 +6,8 @@ import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Rating from '../components/Rating';
 import { PRODUCT_REVIEW_CREATE_RESET } from '../constants/productConstants';
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from 'react-responsive-carousel';
 
 export default function ProductScreen(props) {
   const dispatch = useDispatch();
@@ -26,6 +28,7 @@ export default function ProductScreen(props) {
   const [comment, setComment] = useState('');
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     if (successReviewCreate) {
       window.alert('Review Submitted Successfully');
       setRating('');
@@ -59,11 +62,9 @@ export default function ProductScreen(props) {
           <Link to="/">Torna ai articoli</Link>
           <div className="row top">
             <div className="col-1">
-              <img
-                className="large"
-                src={product.image}
-                alt={product.name}
-              ></img>
+            <Carousel>
+              { product.image.map((image, index) => <img src={image} key={index} alt="preview"/>)}
+            </Carousel>
             </div>
             <div className="col-1 space">
               <ul>

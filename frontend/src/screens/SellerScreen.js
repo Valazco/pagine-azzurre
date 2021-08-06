@@ -21,6 +21,7 @@ export default function SellerScreen(props) {
 
   const dispatch = useDispatch();
   useEffect(() => {
+    window.scrollTo(0, 0)
     dispatch(detailsUser(sellerId));
     dispatch(listProducts({ seller: sellerId }));
   }, [dispatch, sellerId]);

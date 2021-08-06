@@ -42,6 +42,9 @@ import {
   USER_NEWSLETTER_VERIFICATION_REQUEST,
   USER_NEWSLETTER_VERIFICATION_SUCCESS,
   USER_NEWSLETTER_VERIFICATION_FAIL,
+  USER_NEWSLETTER_UPDATE_REQUEST,
+  USER_NEWSLETTER_UPDATE_SUCCESS,
+  USER_NEWSLETTER_UPDATE_FAIL,
 } from '../constants/userConstants'
 
 export const register = (username, email, password, sellername, phone, cf, referer, newsletter) => async (dispatch) => {
@@ -289,7 +292,6 @@ export const newsletter = (name, email) => async (dispatch) => {
 }
 
 export const verifyNewsletter = (email) => async (dispatch) => {
-  console.log(email)
   dispatch({ type: USER_NEWSLETTER_VERIFICATION_REQUEST })
   try {
     const { data } = await Axios.post('/api/users/newsletterVerify', { email })
@@ -301,5 +303,19 @@ export const verifyNewsletter = (email) => async (dispatch) => {
       ? error.response.data.message
       : error.message;
     dispatch({ type: USER_NEWSLETTER_VERIFICATION_FAIL, payload: message })
+  }
+}
+
+export const updateNewsletter = (username, email ) => async (dispatch) => {
+  dispatch({ type: USER_NEWSLETTER_UPDATE_REQUEST })
+  try {
+    const { data } = await Axios.post('/api/users/newsletterUpdate', { username, email })
+    dispatch({ type: USER_NEWSLETTER_UPDATE_SUCCESS })
+  } catch(error) {
+    const message =
+    error.response && error.response.data.message
+      ? error.response.data.message
+      : error.message;
+    dispatch({ type: USER_NEWSLETTER_UPDATE_FAIL, payload: message })
   }
 }

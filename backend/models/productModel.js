@@ -14,9 +14,9 @@ const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     seller: { type: mongoose.Schema.Types.ObjectID, ref: 'User' },
-    image: { type: String, required: true },
-    brand: { type: String, required: false },
-    category: { type: String, required: false },
+    image: { type: Array, required: true },
+    brand: { type: String, required: false, uppercase: true },
+    category: { type: String, required: false, uppercase: true },
     description: { type: String, required: false },
     priceVal: { type: Number, required: false, default: 1 },
     priceEuro: { type: Number, required: false },
@@ -31,7 +31,7 @@ const productSchema = new mongoose.Schema(
     pause: { type: Boolean, required: true , default: false},
     country: { type: String, required: false},
     state: { type: String, required: false },
-    city: { type: String, required: false }, 
+    city: { type: String, required: true, default: '_', uppercase: true }, 
     municipality: { type: String, required: false },
 
     reviews: [reviewSchema],

@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
+import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
+import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
 import {
   createProduct,
   deleteProduct,
@@ -38,6 +40,8 @@ export default function ProductListScreen(props) {
   const { userInfo } = userSignin;
   const dispatch = useDispatch();
   useEffect(() => {
+    window.scrollTo(0, 0)
+    window.scrollTo(0, 0)
     if (successCreate) {
       dispatch({ type: PRODUCT_CREATE_RESET });
       props.history.push(`/product/${createdProduct._id}/edit`);
@@ -69,6 +73,7 @@ export default function ProductListScreen(props) {
   };
   return (
     <div>
+      {/* <ScrollUp /> */}
       <div className="row flash">
         <h1>Lista di Annunci</h1>
         { !userInfo.hasAd && 
@@ -94,30 +99,30 @@ export default function ProductListScreen(props) {
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
         <>
-          <table className="table special">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>IMAGINE</th>
-                <th>TITOLO / ARGOMENTO</th>
-                <th>PREZZO</th>
-                <th>SEZIONE</th>
-                <th>CATEGORIA</th>
-                <th>HASHTAG</th>
-                <th>MODIFICA / CANCELLA</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>ID</Th>
+                <Th>IMAGINE</Th>
+                <Th>TITOLO / ARGOMENTO</Th>
+                <Th>PREZZO</Th>
+                <Th>SEZIONE</Th>
+                <Th>CATEGORIA</Th>
+                <Th>HASHTAG</Th>
+                <Th>MODIFICA / CANCELLA</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
               {products.map((product) => (
-                <tr key={product._id}>
-                  <td>{product._id}</td>
-                  <td><img className="minInfo" src={product.image} alt={product.name}/></td>
-                  <td>{product.name}</td>
-                  <td>☯ {product.priceVal} <br/>€ {product.priceEuro}</td>
-                  <td>{ product.section[0].toUpperCase() + product.section.substring(1)}</td>
-                  <td>{product.category}</td>
-                  <td>{product.brand}</td>
-                  <td>
+                <Tr key={product._id}>
+                  <Td>{product._id}</Td>
+                  <Td><img className="minInfo" src={product.image[0]} alt={product.name}/></Td>
+                  <Td>{product.name}</Td>
+                  <Td>☯ {product.priceVal} <br/>€ {product.priceEuro}</Td>
+                  <Td>{ product.section[0].toUpperCase() + product.section.substring(1)}</Td>
+                  <Td>{product.category}</Td>
+                  <Td>{product.brand}</Td>
+                  <Td>
                     <button
                       type="button"
                       className="small"
@@ -134,11 +139,11 @@ export default function ProductListScreen(props) {
                     >
                       Cancella
                     </button>
-                  </td>
-                </tr>
+                  </Td>
+                </Tr>
               ))}
-            </tbody>
-          </table>
+            </Tbody>
+          </Table>
           <div className="row center pagination">
             {[...Array(pages).keys()].map((x) => (
               <Link

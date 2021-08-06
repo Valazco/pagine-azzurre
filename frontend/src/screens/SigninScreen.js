@@ -22,6 +22,7 @@ export default function SigninScreen(props) {
     dispatch(signin(email, password));
   };
   useEffect(() => {
+    window.scrollTo(0, 0)
     if (userInfo) {
       props.history.push(redirect);
     }

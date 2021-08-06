@@ -39,6 +39,7 @@ export default function OrderScreen(props) {
   } = orderDeliver;
   const dispatch = useDispatch();
   useEffect(() => {
+    window.scrollTo(0, 0)
     // const addPayPalScript = async () => {
     //   const { data } = await Axios.get('/api/config/paypal');
     //   const script = document.createElement('script');
@@ -100,7 +101,7 @@ export default function OrderScreen(props) {
   ) : error ? (
     <MessageBox variant="danger">{error}</MessageBox>
   ) : (
-    <div>
+    <div className="flash">
       <h1>Ordine {order._id}</h1>
       <div className="row top">
         <div className="col-2">
@@ -239,7 +240,7 @@ export default function OrderScreen(props) {
                         (<>
                           <button
                             type="button"
-                            className="primary block"
+                            className="primary block col-1"
                             onClick={askAnotherEmail}
                           >
                             {!mailing?'Vuoi mandare una seconda EMAIL al offerente?':'Invia'}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import LoadingBox from '../components/LoadingBox'
 import MessageBox from '../components/MessageBox'
@@ -17,6 +17,7 @@ export default function TuttiNoi() {
   } = userSellersList;
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     dispatch(listSellers());
   }, [dispatch]);
 

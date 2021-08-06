@@ -19,6 +19,7 @@ export default function PasswordRecoveryScreen(props) {
     dispatch(userPasswordRecovery(emailInput))
   };
   useEffect(() => {
+    window.scrollTo(0, 0)
     props.history.push('/password-recovery')
   },  [props.history, redirect, emailInput, loading ])
   return (
