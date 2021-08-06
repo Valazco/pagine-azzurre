@@ -64,7 +64,7 @@ export default function ProductListScreen(props) {
   ]);
 
   const deleteHandler = (product) => {
-    if (window.confirm('Sicuro di voler cancellare il annuncio?')) {
+    if (window.confirm('Sicuro di voler cancellare l\'annuncio?')) {
       dispatch(deleteProduct(product._id));
     }
   };
