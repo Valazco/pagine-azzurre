@@ -15,11 +15,10 @@ export default function WelcomeBanner(props) {
         Euro e più VAL ☯
       </h1>
       <h2 className="row center welcome">
-      Pagine Azzurre favorisce ogni scambio di prodotti, servizi e competenze finalizzati alla emancipazione umana, per mezzo delle convenzioni monetarie: EUR Euro. USD Dollaro Americano. RUR Rublo Russo. CAN Dollaro Canadese. CNY Yuan Cinese. INR Rupia Indiana. BRL Real Brasiliano. XDR Moneta Fondo Internazionale (IMF). AUD Dollaro Australiano. CRIPTO. Ma preferiamo: VAL, Crediti, G1, RISO e ne richiediamo almeno l'utilizzo parziale.
+        Pagine Azzurre favorisce ogni scambio di prodotti, servizi e competenze
+        con moneta speculativa: Euro, USD, Cripto, ecc... Meglio se non
+        speculativa: VAL, Crediti, Din, ecc...
       </h2>
-      <div>
-        <i>PAGINEAZZURRE è una attività promossa e gestita dal Banco dei Cittadini Volontari del VAL.AZ.CO. (VALorizzatore AZioni COncordate) più semplicemente VAL, sito istituzionale: <a href="https://valazco.org">https://valazco.org</a></i>
-      </div>
       <div className="logos-container">
         <div>
           <img className="Logo1 logo" src={logo1} alt="Logo" />
