@@ -43,13 +43,23 @@ export interface Product {
   brand?: string;
   category: string;
   description: string;
-  price: number;
+  price?: number; // Legacy field
   priceVal: number;
+  priceEuro: number;
   countInStock: number;
   rating: number;
   numReviews: number;
-  section: 'offro' | 'cerco';
+  section: 'offro' | 'cerco' | 'propongo' | 'avviso' | 'dono';
+  isService: boolean;
+  isGift?: boolean;
+  auxPhone?: string;
+  delivery?: string;
+  expiry?: string;
+  pause: boolean;
+  country?: string;
+  state?: string;
   city?: string;
+  municipality?: string;
   seller: {
     _id: string;
     seller: {
@@ -163,4 +173,11 @@ export interface PaginatedResponse<T> {
   page: number;
   pages: number;
   total: number;
+}
+
+// Product list response (matches backend format)
+export interface ProductListResponse {
+  products: Product[];
+  page: number;
+  pages: number;
 }

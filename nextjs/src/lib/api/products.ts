@@ -1,5 +1,5 @@
 import apiClient from './client';
-import type { Product, PaginatedResponse } from '@/types';
+import type { Product, ProductListResponse } from '@/types';
 
 export interface ProductFilters {
   name?: string;
@@ -13,7 +13,7 @@ export interface ProductFilters {
 }
 
 // Get all products with filters
-export async function getProducts(filters?: ProductFilters): Promise<PaginatedResponse<Product>> {
+export async function getProducts(filters?: ProductFilters): Promise<ProductListResponse> {
   const params = new URLSearchParams();
 
   if (filters?.name) params.append('name', filters.name);

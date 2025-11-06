@@ -1,96 +1,125 @@
-import { LoadingBox, MessageBox } from '@/components/ui';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  LoadingBox,
+  MessageBox,
+  Product,
+  WelcomeBanner,
+  Pagination,
+  CookieConsent,
+} from '@/components/ui';
+import { getProducts } from '@/lib/api/products';
+import type { Product as ProductType } from '@/types';
+
+type Section = 'offro' | 'cerco' | 'propongo' | 'avviso' | 'dono';
 
 export default function HomePage() {
+  const router = useRouter();
+  const [section, setSection] = useState<Section>('offro');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getProducts({ pageNumber: page });
+        setProducts(data.products || []);
+        setPages(data.pages || 1);
+        setPage(data.page || 1);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Errore nel caricamento dei prodotti'
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [page]);
+
+  const filteredProducts = products.filter(
+    (product) =>
+      product.section === section &&
+      !product.pause &&
+      !product.name.match(/Annunciø/)
+  );
+
+  const sectionButtons: { value: Section; label: string }[] = [
+    { value: 'offro', label: 'Offerte' },
+    { value: 'cerco', label: 'Richieste' },
+    { value: 'propongo', label: 'Proposte' },
+    { value: 'avviso', label: 'Avvisi' },
+    { value: 'dono', label: 'Dono/Tempo' },
+  ];
+
   return (
     <div className="space-y-8">
-      {/* Hero Section */}
-      <section className="text-center py-12 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Benvenuto su Pagine Azzurre
-        </h1>
-        <p className="text-xl text-gray-700 mb-6">
-          VALorizzatore del AZione COncordata
-        </p>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          La piattaforma italiana per lo scambio di beni e servizi utilizzando VAL
-        </p>
-      </section>
+      {/* Welcome Banner */}
+      <WelcomeBanner />
 
-      {/* Info Section */}
-      <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <h2 className="text-2xl font-bold text-blue-600 mb-3">🤝 Offri</h2>
-          <p className="text-gray-700">
-            Metti in vetrina i tuoi prodotti e servizi per condividerli con la comunità
-          </p>
-        </div>
+      {/* Cookie Consent */}
+      <CookieConsent />
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <h2 className="text-2xl font-bold text-blue-600 mb-3">🔍 Cerca</h2>
-          <p className="text-gray-700">
-            Trova ciò di cui hai bisogno nella nostra rete di offerenti verificati
-          </p>
-        </div>
+      {/* Section Title */}
+      <h1 className="text-3xl md:text-4xl font-bold text-center text-gray-900">
+        ULTIME ATTIVITÀ
+      </h1>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <h2 className="text-2xl font-bold text-blue-600 mb-3">☯ VAL</h2>
-          <p className="text-gray-700">
-            Utilizza i VAL per valorizzare le azioni concordate nella comunità
-          </p>
-        </div>
-      </section>
+      {/* Section Filters */}
+      <div className="flex flex-wrap justify-center gap-3">
+        {sectionButtons.map((btn) => (
+          <button
+            key={btn.value}
+            onClick={() => setSection(btn.value)}
+            className={`
+              px-6 py-2 rounded-lg font-medium transition-all
+              ${
+                section === btn.value
+                  ? 'bg-blue-600 text-white shadow-md scale-105'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-blue-50'
+              }
+            `}
+          >
+            {btn.label}
+          </button>
+        ))}
+      </div>
 
-      {/* Status Section */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-bold text-gray-900">Stato della Migrazione</h2>
+      {/* Loading State */}
+      {loading && <LoadingBox />}
 
-        <MessageBox variant="success">
-          <strong>✅ Completato:</strong> Layout (Header + Footer), Componenti UI base,
-          API Client, Gestione stato (Zustand)
-        </MessageBox>
+      {/* Error State */}
+      {error && !loading && (
+        <MessageBox variant="danger">{error}</MessageBox>
+      )}
 
-        <MessageBox variant="info">
-          <strong>🔄 In Corso:</strong> Migrazione delle pagine principali e componenti avanzati
-        </MessageBox>
+      {/* Products Grid */}
+      {!loading && !error && (
+        <>
+          {filteredProducts.length === 0 ? (
+            <MessageBox variant="info">
+              Nessun prodotto trovato in questa sezione
+            </MessageBox>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => (
+                <Product key={product._id} product={product} />
+              ))}
+            </div>
+          )}
 
-        <MessageBox variant="warning">
-          <strong>⏳ Prossimi Passi:</strong> Migrazione di Home, Product, Cart, Auth pages
-        </MessageBox>
-      </section>
-
-      {/* Test Components */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-bold text-gray-900">Componenti di Test</h2>
-
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 space-y-4">
-          <h3 className="text-lg font-semibold">LoadingBox Component</h3>
-          <LoadingBox />
-        </div>
-
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold">MessageBox Variants</h3>
-          <MessageBox variant="info">Questo è un messaggio informativo</MessageBox>
-          <MessageBox variant="success">Operazione completata con successo!</MessageBox>
-          <MessageBox variant="warning">Attenzione: verifica i dati inseriti</MessageBox>
-          <MessageBox variant="danger">Errore: impossibile completare l&apos;operazione</MessageBox>
-        </div>
-      </section>
-
-      {/* Coming Soon */}
-      <section className="text-center py-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Pagine in Arrivo
-        </h2>
-        <ul className="text-gray-700 space-y-2">
-          <li>🏠 Home con lista prodotti</li>
-          <li>🛍️ Dettaglio prodotto</li>
-          <li>🛒 Carrello</li>
-          <li>🔐 Autenticazione (Signin/Register)</li>
-          <li>👤 Profilo utente</li>
-          <li>📦 Gestione ordini</li>
-          <li>⚙️ Pannello admin</li>
-        </ul>
-      </section>
+          {/* Pagination */}
+          <Pagination currentPage={page} totalPages={pages} />
+        </>
+      )}
     </div>
   );
 }
