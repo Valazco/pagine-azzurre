@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 
 export default function WelcomeBanner() {
   const logos = [
@@ -11,15 +10,15 @@ export default function WelcomeBanner() {
   ];
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 via-blue-100 to-blue-50 rounded-lg shadow-md p-6 md:p-8 mb-8">
+    <div className="bg-[#efefef] rounded-lg text-[#232323] flex flex-col gap-4 my-8 mx-auto max-w-[1200px]">
       {/* Welcome Title */}
-      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-6">
+      <h1 className="text-[1.8rem] p-4 text-center">
         Benvenuti in Pagine Azzurre, piazza dove barattiamo e scambiamo con meno
         Euro e più VAL ☯
       </h1>
 
       {/* Mission Statement */}
-      <h2 className="text-base md:text-lg text-center text-gray-700 mb-8 max-w-5xl mx-auto leading-relaxed">
+      <h2 className="text-[1.4rem] font-semibold text-[#646464] text-center px-4">
         Pagine Azzurre favorisce ogni scambio di prodotti, servizi e competenze
         finalizzati alla emancipazione umana, per mezzo delle convenzioni monetarie:
         EUR Euro. USD Dollaro Americano. RUR Rublo Russo. CAN Dollaro Canadese.
@@ -28,36 +27,33 @@ export default function WelcomeBanner() {
         AUD Dollaro Australiano. CRIPTO. Ma preferiamo: VAL, Crediti, G1, RISO e ne richiediamo almeno l&apos;utilizzo parziale.
       </h2>
 
-      {/* Logos Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+      {/* Logos Container */}
+      <div className="flex mx-auto gap-4">
         {logos.map((logo, index) => (
-          <div
-            key={index}
-            className="relative aspect-square bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
-          >
+          <div key={index}>
             <Image
               src={logo.src}
               alt={logo.alt}
-              fill
-              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
-              className="object-contain p-2"
+              width={55}
+              height={55}
+              className="h-[5.5rem] rounded-full mt-[2px]"
             />
           </div>
         ))}
       </div>
 
       {/* Footer Info */}
-      <p className="text-center text-gray-700 text-sm md:text-base">
+      <div className="text-center px-4 pb-4">
         Pagineazzurre è una attività promossa e gestita dal Banco dei Cittadini Volontari del Val.Az.Co.&nbsp;
         <a
           href="http://valazco.org/scopri-pagine-azzurre.html"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:text-blue-800 font-medium underline"
+          className="hover:text-[#ff8000]"
         >
           http://valazco.org
         </a>
-      </p>
+      </div>
     </div>
   );
 }

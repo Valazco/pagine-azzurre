@@ -61,65 +61,64 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div>
       {/* Welcome Banner */}
       <WelcomeBanner />
 
       {/* Cookie Consent */}
       <CookieConsent />
 
-      {/* Section Title */}
-      <h1 className="text-3xl md:text-4xl font-bold text-center text-gray-900">
-        ULTIME ATTIVITÀ
-      </h1>
+      <div>
+        {/* Section Title */}
+        <h1 className="text-[1.8rem] text-center p-4">
+          ULTIME ATTIVITÀ
+        </h1>
 
-      {/* Section Filters */}
-      <div className="flex flex-wrap justify-center gap-3">
-        {sectionButtons.map((btn) => (
-          <button
-            key={btn.value}
-            onClick={() => setSection(btn.value)}
-            className={`
-              px-6 py-2 rounded-lg font-medium transition-all
-              ${
+        {/* Section Filters */}
+        <div className="flex justify-center my-4">
+          {sectionButtons.map((btn) => (
+            <button
+              key={btn.value}
+              onClick={() => setSection(btn.value)}
+              className={
                 section === btn.value
-                  ? 'bg-blue-600 text-white shadow-md scale-105'
-                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-blue-50'
+                  ? 'bg-[#dff3f7] px-[0.6rem] py-[0.6rem] mx-[0.4rem] shadow-[5px_5px_8px_#c7c7c7] underline rounded-[0.5rem] border-[0.2rem] border-[#a4a4a4]'
+                  : 'bg-[#caf0f8] px-[0.4rem] py-[0.4rem] mx-[0.4rem] rounded-[0.5rem] border-[0.2rem] border-[#a4a4a4] hover:outline hover:outline-[0.1rem] hover:outline-[#9c9b9b]'
               }
-            `}
-          >
-            {btn.label}
-          </button>
-        ))}
+            >
+              {btn.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Loading State */}
+        {loading && <LoadingBox />}
+
+        {/* Error State */}
+        {error && !loading && (
+          <MessageBox variant="danger">{error}</MessageBox>
+        )}
+
+        {/* Products Grid */}
+        {!loading && !error && (
+          <>
+            {filteredProducts.length === 0 ? (
+              <MessageBox variant="info">
+                Nessun prodotto trovato in questa sezione
+              </MessageBox>
+            ) : (
+              <div className="flex justify-center flex-wrap max-w-[1200px] mx-auto">
+                {filteredProducts.map((product) => (
+                  <Product key={product._id} product={product} />
+                ))}
+              </div>
+            )}
+
+            {/* Pagination */}
+            <Pagination currentPage={page} totalPages={pages} />
+          </>
+        )}
       </div>
-
-      {/* Loading State */}
-      {loading && <LoadingBox />}
-
-      {/* Error State */}
-      {error && !loading && (
-        <MessageBox variant="danger">{error}</MessageBox>
-      )}
-
-      {/* Products Grid */}
-      {!loading && !error && (
-        <>
-          {filteredProducts.length === 0 ? (
-            <MessageBox variant="info">
-              Nessun prodotto trovato in questa sezione
-            </MessageBox>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
-                <Product key={product._id} product={product} />
-              ))}
-            </div>
-          )}
-
-          {/* Pagination */}
-          <Pagination currentPage={page} totalPages={pages} />
-        </>
-      )}
     </div>
   );
 }
