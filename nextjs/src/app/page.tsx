@@ -61,30 +61,38 @@ export default function HomePage() {
   ];
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Welcome Banner */}
       <WelcomeBanner />
 
       {/* Cookie Consent */}
       <CookieConsent />
 
-      <div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Section Title */}
-        <h1 className="text-[1.8rem] text-center p-4">
-          ULTIME ATTIVITÀ
-        </h1>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+            Ultime Attività
+          </h1>
+          <p className="text-gray-600 text-lg">
+            Esplora le nostre sezioni di prodotti e servizi
+          </p>
+        </div>
 
         {/* Section Filters */}
-        <div className="flex justify-center my-4">
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
           {sectionButtons.map((btn) => (
             <button
               key={btn.value}
               onClick={() => setSection(btn.value)}
-              className={
-                section === btn.value
-                  ? 'bg-[#dff3f7] px-[0.6rem] py-[0.6rem] mx-[0.4rem] shadow-[5px_5px_8px_#c7c7c7] underline rounded-[0.5rem] border-[0.2rem] border-[#a4a4a4]'
-                  : 'bg-[#caf0f8] px-[0.4rem] py-[0.4rem] mx-[0.4rem] rounded-[0.5rem] border-[0.2rem] border-[#a4a4a4] hover:outline hover:outline-[0.1rem] hover:outline-[#9c9b9b]'
-              }
+              className={`
+                px-6 py-2.5 rounded-full font-medium text-sm transition-all duration-200
+                ${
+                  section === btn.value
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-105'
+                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300 hover:shadow-md'
+                }
+              `}
             >
               {btn.label}
             </button>
@@ -92,22 +100,30 @@ export default function HomePage() {
         </div>
 
         {/* Loading State */}
-        {loading && <LoadingBox />}
+        {loading && (
+          <div className="py-12">
+            <LoadingBox />
+          </div>
+        )}
 
         {/* Error State */}
         {error && !loading && (
-          <MessageBox variant="danger">{error}</MessageBox>
+          <div className="max-w-2xl mx-auto py-8">
+            <MessageBox variant="danger">{error}</MessageBox>
+          </div>
         )}
 
         {/* Products Grid */}
         {!loading && !error && (
           <>
             {filteredProducts.length === 0 ? (
-              <MessageBox variant="info">
-                Nessun prodotto trovato in questa sezione
-              </MessageBox>
+              <div className="max-w-2xl mx-auto py-12">
+                <MessageBox variant="info">
+                  Nessun prodotto trovato in questa sezione
+                </MessageBox>
+              </div>
             ) : (
-              <div className="flex justify-center flex-wrap max-w-[1200px] mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
                 {filteredProducts.map((product) => (
                   <Product key={product._id} product={product} />
                 ))}

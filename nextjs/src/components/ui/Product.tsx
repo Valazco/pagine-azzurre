@@ -29,78 +29,77 @@ export default function Product({ product }: ProductProps) {
     product.section !== 'dono';
 
   return (
-    <div className="w-[280px] h-[768px] flex flex-col gap-4 overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0px_2px_4px_rgba(192,192,192,0.5)]">
+    <div className="group w-full max-w-sm bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
       {/* Image Container */}
       <Link
         href={`/product/${product._id}`}
-        className="block"
+        className="block relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100"
       >
         <Image
           src={imgSrc}
           alt={product.name}
-          width={280}
-          height={280}
-          className="w-[280px] h-[280px] object-cover block"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
           onError={() => setImgError(true)}
           loading="lazy"
         />
-      </Link>
 
-      {/* Content */}
-      <div className="flex flex-col h-full gap-4">
-        {/* Product Type Badge */}
-        <div className="text-center">
-          <span className="text-base">
+        {/* Product Type Badge - Floating */}
+        <div className="absolute top-3 right-3">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-sm text-gray-700 shadow-md">
             {getProductType()}
           </span>
         </div>
+      </Link>
 
-        {/* Card Body */}
-        <div className="flex flex-col justify-between h-full px-4 pb-4">
-          {/* Product Name */}
-          <Link
-            href={`/product/${product._id}`}
-            className="block"
-          >
-            <h2 className="text-[1.6rem] leading-tight p-0 break-words hover:text-[#ff8000] transition-colors">
-              {product.name}
-            </h2>
-          </Link>
+      {/* Content */}
+      <div className="p-5 flex flex-col gap-3">
+        {/* Product Name */}
+        <Link
+          href={`/product/${product._id}`}
+          className="block group/title"
+        >
+          <h2 className="text-lg font-semibold text-gray-900 leading-snug line-clamp-2 min-h-[3.5rem] group-hover/title:text-blue-600 transition-colors">
+            {product.name}
+          </h2>
+        </Link>
 
-          {/* Details Section */}
-          <div className="flex flex-col gap-2">
-            {/* Seller */}
-            <div>
-              <Link
-                href={`/product/${product._id}`}
-                className="hover:text-[#ff8000] transition-colors"
-              >
-                {product.seller?.seller?.name || 'Venditore'}
-              </Link>
-            </div>
+        {/* Seller */}
+        <Link
+          href={`/product/${product._id}`}
+          className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium"
+        >
+          {product.seller?.seller?.name || 'Venditore'}
+        </Link>
 
-            {/* Rating */}
-            <div>
-              <Rating
-                rating={product.rating || 0}
-                numReviews={product.numReviews || 0}
-              />
-            </div>
-
-            {/* Prices */}
-            {showPrices && (
-              <div className="mx-auto text-[1.6rem] flex items-center">
-                <div className="flex items-center">
-                  <span>€ {product.priceEuro?.toFixed(2) || '0.00'}</span>
-                  <span className="mx-2">e</span>
-                </div>
-                <div className="flex items-center ml-2">
-                  <span>☯ {product.priceVal || 0}</span>
-                </div>
-              </div>
-            )}
-          </div>
+        {/* Rating */}
+        <div className="flex items-center">
+          <Rating
+            rating={product.rating || 0}
+            numReviews={product.numReviews || 0}
+          />
         </div>
+
+        {/* Prices */}
+        {showPrices && (
+          <div className="pt-3 mt-auto border-t border-gray-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-baseline gap-1">
+                <span className="text-sm text-gray-500 font-medium">€</span>
+                <span className="text-2xl font-bold text-gray-900">
+                  {product.priceEuro?.toFixed(2) || '0.00'}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 px-3 py-1 bg-blue-50 rounded-lg">
+                <span className="text-base">☯</span>
+                <span className="text-lg font-bold text-blue-600">
+                  {product.priceVal || 0}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
