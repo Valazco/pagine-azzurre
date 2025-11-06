@@ -1,5 +1,19 @@
 import jwt from 'jsonwebtoken';
 
+// Get JWT secret with proper fallback
+const getJWTSecret = () => {
+  if (process.env.JWT_SECRET) {
+    return process.env.JWT_SECRET;
+  }
+  // Only allow fallback in development
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('WARNING: Using default JWT_SECRET. Set JWT_SECRET environment variable in production!');
+    return 'somethingsecret';
+  }
+  // In production, fail if JWT_SECRET is not set
+  throw new Error('FATAL: JWT_SECRET environment variable is not set. Please set it before starting the server.');
+};
+
 export const generateToken = (user) => {
   return jwt.sign(
     {
@@ -9,9 +23,9 @@ export const generateToken = (user) => {
       isAdmin: user.isAdmin,
       isSeller: user.isSeller,
     },
-    process.env.JWT_SECRET || 'somethingsecret',
+    getJWTSecret(),
     {
-      expiresIn: '1d',
+      expiresIn: '30d', // Extended from 1d to 30d for better UX
     }
   );
 };
@@ -30,7 +44,7 @@ export const isAuth = (req, res, next) => {
     const token = authorization.slice(7, authorization.length); // Bearer XXXXXX
     jwt.verify(
       token,
-      process.env.JWT_SECRET || 'somethingsecret',
+      getJWTSecret(),
       (err, decode) => {
         if (err) {
           res.status(401).send({ message: 'Token scaduto. Esci e riaccedi' });
@@ -63,6 +77,17 @@ export const isSellerOrAdmin = (req, res, next) => {
     next();
   } else {
     res.status(401).send({ message: 'Invalid Admin/Seller Token' });
+  }
+};
+
+export const isDevelopment = (req, res, next) => {
+  // Only allow seed endpoints in development or when explicitly enabled
+  if (process.env.NODE_ENV === 'development' || process.env.ALLOW_SEED === 'true') {
+    next();
+  } else {
+    res.status(403).send({
+      message: 'Seed endpoints are disabled in production for security reasons'
+    });
   }
 };
 

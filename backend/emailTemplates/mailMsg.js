@@ -1,3 +1,14 @@
+// Sanitize HTML to prevent XSS attacks in email templates
+const escapeHtml = (unsafe) => {
+  if (typeof unsafe !== 'string') return unsafe;
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};
+
 let msgPreRegistration = ( recipient, uuidLink, isNewsletterRegistred ) => {
   let now = new Date()
   let hrs = now.getHours()
@@ -9,25 +20,29 @@ let msgPreRegistration = ( recipient, uuidLink, isNewsletterRegistred ) => {
   if(hrs === 12) moment = 'Buon pomeriggio'
   if(hrs >= 13) moment = 'Buona sera'
 
+  // Sanitize inputs to prevent injection attacks
+  const safeRecipient = escapeHtml(recipient);
+  const safeUuidLink = escapeHtml(uuidLink);
+
   if( isNewsletterRegistred ) {
     msg = {
-      to: recipient,
+      to: safeRecipient,
       from: "iscrizioni.pagineazzurre@cittadini-volontari.it",
       subject: `Pagine Azzurre: Verifica della registrazione`,
       html: `<p>${moment},</p>\
         <p>Conferma la registrazione alle pagineazzurre.net e alla sua newsletter cliccando il seguente link.</p></br>\
-        <a href="https://www.pagineazzurre.net/verification/${uuidLink}" target="_blank">Link per verificare l'inscrizione</a></br></br>\
+        <a href="https://www.pagineazzurre.net/verification/${safeUuidLink}" target="_blank">Link per verificare l'inscrizione</a></br></br>\
         <p>Grazie per aver scelto le pagineazzurre.net</p>\
       `
     }
   } else {
     msg = {
-      to: recipient,
+      to: safeRecipient,
       from: "iscrizioni.pagineazzurre@cittadini-volontari.it",
       subject: `Pagine Azzurre: Verifica della registrazione`,
       html: `<p>${moment},</p>\
         <p>Conferma la registrazione alle pagineazzurre.net cliccando il seguente link.</p></br>\
-        <a href="https://www.pagineazzurre.net/verification/${uuidLink}" target="_blank">Link per verificare l'inscrizione</a></br></br>\
+        <a href="https://www.pagineazzurre.net/verification/${safeUuidLink}" target="_blank">Link per verificare l'inscrizione</a></br></br>\
         <p>Grazie per aver scelto le pagineazzurre.net</p>\
       `
     }
@@ -48,13 +63,16 @@ let msgRegistration = (recipient, username, isNewsletterRegistred) => {
   if(hrs === 12) moment = 'Buon pomeriggio'
   if(hrs >= 13) moment = 'Buona sera'
 
-  
+  // Sanitize inputs to prevent injection attacks
+  const safeRecipient = escapeHtml(recipient);
+  const safeUsername = escapeHtml(username);
+
   if (isNewsletterRegistred === true) {
     msg = {
-      to: recipient,
+      to: safeRecipient,
       from: "iscrizioni.pagineazzurre@cittadini-volontari.it",
-      subject: `${username}, Benvenuto nelle Pagine Azzurre.`,
-      html: `<p>${moment} ${username},</p></br>\
+      subject: `${safeUsername}, Benvenuto nelle Pagine Azzurre.`,
+      html: `<p>${moment} ${safeUsername},</p></br>\
         <p>Benvenuta/o con noi nelle PAGINE AZZURRE. Ti sei registrato con successo.</br>\
         Aderisci e usufruisci della convenzione: VALorizza le AZioni che COncordi.</br>\
         Ora puoi partecipare con le tue proposte, inserisci le cose che vuoi mettere</br>\
@@ -74,10 +92,10 @@ let msgRegistration = (recipient, username, isNewsletterRegistred) => {
       }
     } else {
       msg = {
-        to: recipient,
+        to: safeRecipient,
         from: "iscrizioni.pagineazzurre@cittadini-volontari.it",
-        subject: `${username}, Benvenuto nelle Pagine Azzurre.`,
-        html: `<p>${moment} ${username},</p></br>\
+        subject: `${safeUsername}, Benvenuto nelle Pagine Azzurre.`,
+        html: `<p>${moment} ${safeUsername},</p></br>\
         <p>Benvenuta/o con noi nelle PAGINE AZZURRE. Ti sei registrato con successo.</br>\
         Aderisci e usufruisci della convenzione: VALorizza le AZioni che COncordi.</br>\
         Ora puoi partecipare con le tue proposte, inserisci le cose che vuoi mettere</br>\
@@ -100,15 +118,19 @@ let msgRegistration = (recipient, username, isNewsletterRegistred) => {
   }
 
 let msgPasswordRecovery = (recipient, hash) => {
-  let msg = { 
-    to: recipient,
+  // Sanitize inputs to prevent injection attacks
+  const safeRecipient = escapeHtml(recipient);
+  const safeHash = escapeHtml(hash);
+
+  let msg = {
+    to: safeRecipient,
     from: 'iscrizioni.pagineazzurre@cittadini-volontari.it',
     subject: 'Pagine Azzurre: Richiesta cambio Password',
-    text: `Hai chiesto un recupero/cambio di password? Per confermare clicca il seguente link https://www.pagineazzurre.net/password-recovery/${hash} . Se la domanda di recupero/cambio password non fosse stata da te richiesta, ignora questa email e non rispondere. 
+    text: `Hai chiesto un recupero/cambio di password? Per confermare clicca il seguente link https://www.pagineazzurre.net/password-recovery/${safeHash} . Se la domanda di recupero/cambio password non fosse stata da te richiesta, ignora questa email e non rispondere.
     .`,
-    html: `<p>Hai chiesto un cambio di password?  Per confermare clicca il seguente <a href="https://www.pagineazzurre.net/password-recovery/${hash}" target="_blank"}>Link</a> . In caso la richiesta cambio password no sia stata solicitata ignorare questo email.</p>`
+    html: `<p>Hai chiesto un cambio di password?  Per confermare clicca il seguente <a href="https://www.pagineazzurre.net/password-recovery/${safeHash}" target="_blank"}>Link</a> . In caso la richiesta cambio password no sia stata solicitata ignorare questo email.</p>`
   }
-  return msg 
+  return msg
 }
 
 let msgPasswordReplaced = (recipient, name) => {
@@ -120,76 +142,112 @@ let msgPasswordReplaced = (recipient, name) => {
   if(hrs < 12) moment = 'Buongiorno'
   if(hrs === 12) moment = 'Buon pomeriggio'
   if(hrs >= 13) moment = 'Buona sera'
-  
-  let msg = { 
-    to: recipient,
+
+  // Sanitize inputs to prevent injection attacks
+  const safeRecipient = escapeHtml(recipient);
+  const safeName = escapeHtml(name);
+
+  let msg = {
+    to: safeRecipient,
     from: 'iscrizioni.pagineazzurre@cittadini-volontari.it',
     subject: 'Pagine Azzurre: Password cambiata con successo',
     text: `Il cambio password e avvenuto con successo`,
-    html: `<p>${moment} ${name}, il cambio password è avvenuto con successo.</p>`
+    html: `<p>${moment} ${safeName}, il cambio password è avvenuto con successo.</p>`
   }
-  return msg 
+  return msg
 }
 
 let msgOrderNotificationToOfferer = (offerer, orderdetails, buyer) => {
+  // Sanitize all user inputs to prevent injection attacks
+  const safeOffererEmail = escapeHtml(offerer.email);
+  const safeOffererUsername = escapeHtml(offerer.username);
+  const safeBuyerUsername = escapeHtml(buyer[0].username);
+  const safeBuyerEmail = escapeHtml(buyer[0].email);
+  const safeBuyerPhone = escapeHtml(buyer[0].phone);
+  const safeOrderName = escapeHtml(orderdetails.orderItems[0].name);
+  const safeProductId = escapeHtml(String(orderdetails.orderItems[0].product));
+  const safeOrderId = escapeHtml(String(orderdetails._id));
+  const safeShippingPhone = escapeHtml(orderdetails.shippingAddress.phone);
+
   let msg = {
-    to: offerer.email,
+    to: safeOffererEmail,
     from: "iscrizioni.pagineazzurre@cittadini-volontari.it",
     subject: "Pagine Azzurre Notificazione d\'Ordine al offerente",
-    html: `<p>Buongiorno ${offerer.username},</p><br><p><strong>Hai un nuovo ordine nelle pagine azzurre</strong></p><br><p>Nome annuncio: 
-           ${orderdetails.orderItems[0].name}</p><p>Product ID: 
-           ${orderdetails.orderItems[0].product}</p><p>Order id: 
-           ${orderdetails._id}</p><p>Quantità: 
+    html: `<p>Buongiorno ${safeOffererUsername},</p><br><p><strong>Hai un nuovo ordine nelle pagine azzurre</strong></p><br><p>Nome annuncio:
+           ${safeOrderName}</p><p>Product ID:
+           ${safeProductId}</p><p>Order id:
+           ${safeOrderId}</p><p>Quantità:
            ${orderdetails.orderItems[0].qty}</p><p>Prezzo in Val: ☯
            ${orderdetails.orderItems[0].priceVal}</p><p>Prezzo in Euro: €
-           ${orderdetails.orderItems[0].priceEuro}</p><br><p><strong>Informazione del compratore</strong></p><br><p>Username: 
-           ${buyer[0].username}</p><p>Email: 
-           ${buyer[0].email}</p><p>Telefono: 
-           ${ orderdetails.shippingAddress.phone !== buyer[0].email && orderdetails.shippingAddress.phone !== '' ? orderdetails.shippingAddress.phone : buyer[0].phone !== buyer[0].email ? buyer[0].phone : 'Non Disponibile'}</p>`
+           ${orderdetails.orderItems[0].priceEuro}</p><br><p><strong>Informazione del compratore</strong></p><br><p>Username:
+           ${safeBuyerUsername}</p><p>Email:
+           ${safeBuyerEmail}</p><p>Telefono:
+           ${ safeShippingPhone !== buyer[0].email && orderdetails.shippingAddress.phone !== '' ? safeShippingPhone : safeBuyerPhone !== buyer[0].email ? safeBuyerPhone : 'Non Disponibile'}</p>`
   }
   return msg
 }
 
 let msgOrderNotificationToBuyer = (buyer, orderdetails, offerer) => {
+  // Sanitize all user inputs to prevent injection attacks
+  const safeBuyerEmail = escapeHtml(buyer[0].email);
+  const safeBuyerUsername = escapeHtml(buyer[0].username);
+  const safeOffererUsername = escapeHtml(offerer.username);
+  const safeOffererEmail = escapeHtml(offerer.email);
+  const safeOffererPhone = escapeHtml(offerer.phone);
+  const safeOrderName = escapeHtml(orderdetails.orderItems[0].name);
+  const safeProductId = escapeHtml(String(orderdetails.orderItems[0].product));
+  const safeOrderItemId = escapeHtml(String(orderdetails.orderItems[0]._id));
+
   let msg = {
-    to: buyer[0].email,
+    to: safeBuyerEmail,
     from: "iscrizioni.pagineazzurre@cittadini-volontari.it",
     subject: "Pagine Azzurre Notificazione d\'Ordine al compratore",
-    html: `<p>Buongiorno ${buyer[0].username},</p><br><p><strong>Hai completato un nuovo ordine nelle pagine azzurre</strong></p><br><p>Nome annuncio: 
-    ${orderdetails.orderItems[0].name}</p><p>Product ID: 
-    ${orderdetails.orderItems[0].product}</p><p>Order id: 
-    ${orderdetails.orderItems[0]._id}</p><p>Quantità: 
+    html: `<p>Buongiorno ${safeBuyerUsername},</p><br><p><strong>Hai completato un nuovo ordine nelle pagine azzurre</strong></p><br><p>Nome annuncio:
+    ${safeOrderName}</p><p>Product ID:
+    ${safeProductId}</p><p>Order id:
+    ${safeOrderItemId}</p><p>Quantità:
     ${orderdetails.orderItems[0].qty}</p><p>Prezzo in Val: ☯
     ${orderdetails.orderItems[0].priceVal}</p><p>Prezzo in Euro: €
-    ${orderdetails.orderItems[0].priceEuro}</p><br><p><strong>Informazione del Offerente</strong></p><br><p>Username: 
-    ${offerer.username}</p><p>Email: 
-    ${offerer.email}</p><p>Telefono: 
-    ${ offerer.phone !== offerer.email ? offerer.phone : 'Non Disponibile'}</p>`
+    ${orderdetails.orderItems[0].priceEuro}</p><br><p><strong>Informazione del Offerente</strong></p><br><p>Username:
+    ${safeOffererUsername}</p><p>Email:
+    ${safeOffererEmail}</p><p>Telefono:
+    ${ safeOffererPhone !== offerer.email ? safeOffererPhone : 'Non Disponibile'}</p>`
     // ${orderdetails.shippingAddress.phone !== buyer[0].email && orderdetails.shippingAddress.phone !== '' ? 'Non disponible'}</p>`
   }
   return msg
 }
 
 let secondMailToOfferer = (envelop) => {
+  // Sanitize all user inputs to prevent injection attacks
+  const safeOffererEmail = escapeHtml(envelop.offerer.email);
+  const safeOffererName = escapeHtml(envelop.offerer.name);
+  const safeBuyer = escapeHtml(envelop.buyer);
+  const safeOrderNames = escapeHtml(envelop.orderNames);
+  const safeEmailBody = escapeHtml(envelop.emailBody);
+
   let msg = {
-    to: envelop.offerer.email,
+    to: safeOffererEmail,
     from: "iscrizioni.pagineazzurre@cittadini-volontari.it",
-    subject: `${envelop.offerer.name}, ${envelop.buyer} ti ha scrito un messagio."`,
-    html: `<p>Buongiorno ${envelop.offerer.name},</p><br><p>Hai un messagio di ${envelop.buyer} relativo alla tua inserzione ${envelop.orderNames}</p><br><p>Messagio: ${envelop.emailBody}`
+    subject: `${safeOffererName}, ${safeBuyer} ti ha scrito un messagio."`,
+    html: `<p>Buongiorno ${safeOffererName},</p><br><p>Hai un messagio di ${safeBuyer} relativo alla tua inserzione ${safeOrderNames}</p><br><p>Messagio: ${safeEmailBody}`
   }
   return msg
 }
 
 let newsletterWelcome = (email, name) => {
+  // Sanitize inputs to prevent injection attacks
+  const safeEmail = escapeHtml(email);
+  const safeName = escapeHtml(name);
+
   let msg = {
-    to: email,
+    to: safeEmail,
     from: "iscrizioni.pagineazzurre@cittadini-volontari.it",
-    subject: `${name}, ti sei inscrito alla newsletter delle Pagine Azzurre?`,
-    html: `<h3>${name}, grazie per esserti inscrita/o alla newsletter delle pagine Azzurre</h3>\
+    subject: `${safeName}, ti sei inscrito alla newsletter delle Pagine Azzurre?`,
+    html: `<h3>${safeName}, grazie per esserti inscrita/o alla newsletter delle pagine Azzurre</h3>\
     <br>\
-    <p>${name}, vogliamo tenerti sempre aggiornata/o con le ultime novità.</p>\
+    <p>${safeName}, vogliamo tenerti sempre aggiornata/o con le ultime novità.</p>\
     <p>Ti ringraziamo di cuore per il tuo interesse al progetto.</p>\
-    <p>Ti chiediamo di confermare clicando <a href="https://www.pagineazzurre.net/newsletter/${email}" target="_blank">qui</a>.</p>\
+    <p>Ti chiediamo di confermare clicando <a href="https://www.pagineazzurre.net/newsletter/${safeEmail}" target="_blank">qui</a>.</p>\
     <p>Se hai ricevuto questa email per errore ignòrala.</p>\
     `
   }

@@ -41,5 +41,15 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Automatically exclude sensitive fields when converting to JSON
+userSchema.methods.toJSON = function() {
+  const user = this.toObject();
+  delete user.accountKey;
+  delete user.password;
+  delete user.recoveryPasswordId;
+  return user;
+};
+
 const User = mongoose.model('User', userSchema);
 export default User;
