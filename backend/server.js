@@ -17,10 +17,8 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
-  'https://web-production-27a8e.up.railway.app',
-  // Add your Vercel domains here after deployment
-  // 'https://your-app.vercel.app',
-  // 'https://your-app-*.vercel.app', // Preview deployments
+  'https://web-production-79caf.up.railway.app',
+  'https://nextjs-plzsn5x01-chococoins-projects.vercel.app',
 ];
 
 app.use(cors({
