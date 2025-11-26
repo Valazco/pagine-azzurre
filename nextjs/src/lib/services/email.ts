@@ -171,3 +171,130 @@ export async function sendNewsletterWelcomeEmail(to: string, name?: string) {
     });
   }
 }
+
+// Order notification interfaces
+interface OrderNotificationData {
+  offererEmail: string;
+  offererName: string;
+  buyerEmail: string;
+  buyerName: string;
+  orderItems: string;
+  totalPrice: number;
+  shippingAddress: string;
+}
+
+export async function sendOrderNotificationToOfferer(data: OrderNotificationData) {
+  const templateUuid = process.env.MAILTRAP_TEMPLATE_ORDER_OFFERER;
+
+  if (templateUuid) {
+    await mailtrap.send({
+      from: sender,
+      to: [{ email: data.offererEmail }],
+      template_uuid: templateUuid,
+      template_variables: {
+        offerer_name: data.offererName,
+        buyer_name: data.buyerName,
+        order_items: data.orderItems,
+        total_price: data.totalPrice.toString(),
+        shipping_address: data.shippingAddress,
+      },
+    });
+  } else {
+    await mailtrap.send({
+      from: sender,
+      to: [{ email: data.offererEmail }],
+      subject: 'Nuovo Ordine Ricevuto - Pagine Azzurre',
+      html: `
+        <h1>Nuovo Ordine Ricevuto!</h1>
+        <p>Ciao ${data.offererName},</p>
+        <p>Hai ricevuto un nuovo ordine da ${data.buyerName}.</p>
+        <h3>Dettagli Ordine:</h3>
+        <p><strong>Prodotti:</strong> ${data.orderItems}</p>
+        <p><strong>Totale:</strong> ${data.totalPrice} VAL</p>
+        <p><strong>Indirizzo di spedizione:</strong> ${data.shippingAddress}</p>
+        <p>Accedi al tuo account per gestire l'ordine.</p>
+        <p>Il team di Pagine Azzurre</p>
+      `,
+      text: `Nuovo ordine ricevuto da ${data.buyerName}. Prodotti: ${data.orderItems}. Totale: ${data.totalPrice} VAL`,
+    });
+  }
+}
+
+export async function sendOrderNotificationToBuyer(data: OrderNotificationData) {
+  const templateUuid = process.env.MAILTRAP_TEMPLATE_ORDER_BUYER;
+
+  if (templateUuid) {
+    await mailtrap.send({
+      from: sender,
+      to: [{ email: data.buyerEmail }],
+      template_uuid: templateUuid,
+      template_variables: {
+        buyer_name: data.buyerName,
+        offerer_name: data.offererName,
+        order_items: data.orderItems,
+        total_price: data.totalPrice.toString(),
+        shipping_address: data.shippingAddress,
+      },
+    });
+  } else {
+    await mailtrap.send({
+      from: sender,
+      to: [{ email: data.buyerEmail }],
+      subject: 'Conferma Ordine - Pagine Azzurre',
+      html: `
+        <h1>Ordine Confermato!</h1>
+        <p>Ciao ${data.buyerName},</p>
+        <p>Il tuo ordine è stato confermato.</p>
+        <h3>Dettagli Ordine:</h3>
+        <p><strong>Venditore:</strong> ${data.offererName}</p>
+        <p><strong>Prodotti:</strong> ${data.orderItems}</p>
+        <p><strong>Totale:</strong> ${data.totalPrice} VAL</p>
+        <p><strong>Indirizzo di spedizione:</strong> ${data.shippingAddress}</p>
+        <p>Grazie per il tuo acquisto!</p>
+        <p>Il team di Pagine Azzurre</p>
+      `,
+      text: `Ordine confermato. Venditore: ${data.offererName}. Prodotti: ${data.orderItems}. Totale: ${data.totalPrice} VAL`,
+    });
+  }
+}
+
+export async function sendOrderMailingToOfferer(
+  offererEmail: string,
+  offererName: string,
+  buyerName: string,
+  orderItems: string,
+  emailBody: string
+) {
+  const templateUuid = process.env.MAILTRAP_TEMPLATE_ORDER_MAILING;
+
+  if (templateUuid) {
+    await mailtrap.send({
+      from: sender,
+      to: [{ email: offererEmail }],
+      template_uuid: templateUuid,
+      template_variables: {
+        offerer_name: offererName,
+        buyer_name: buyerName,
+        order_items: orderItems,
+        email_body: emailBody,
+      },
+    });
+  } else {
+    await mailtrap.send({
+      from: sender,
+      to: [{ email: offererEmail }],
+      subject: 'Messaggio relativo al tuo ordine - Pagine Azzurre',
+      html: `
+        <h1>Messaggio dall'acquirente</h1>
+        <p>Ciao ${offererName},</p>
+        <p>${buyerName} ti ha inviato un messaggio riguardo all'ordine:</p>
+        <p><strong>Prodotti:</strong> ${orderItems}</p>
+        <hr>
+        <p>${emailBody}</p>
+        <hr>
+        <p>Il team di Pagine Azzurre</p>
+      `,
+      text: `Messaggio da ${buyerName} riguardo all'ordine: ${orderItems}. ${emailBody}`,
+    });
+  }
+}
