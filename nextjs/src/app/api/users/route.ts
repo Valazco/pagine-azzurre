@@ -95,8 +95,8 @@ export async function POST(request: NextRequest) {
 
     // Hash password and create wallet
     const hashedPassword = bcrypt.hashSync(password, 8);
-    const entropy = hashedPassword + (process.env.ENTROPY || '');
-    const wallet = Wallet.createRandom({ extraEntropy: Buffer.from(entropy) });
+    // In ethers v6, Wallet.createRandom() uses secure random by default
+    const wallet = Wallet.createRandom();
     const trustedLink = uuidv4();
 
     // Create user
