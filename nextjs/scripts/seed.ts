@@ -27,7 +27,7 @@ async function seed() {
     surname: 'Rossi',
     email: 'mario@example.com',
     city: 'ROMA',
-    zipCode: 00100,
+    zipCode: '00100',
     phone: '+39123456789',
     password: hashedPassword,
     isAdmin: true,

@@ -5,6 +5,50 @@ import { useRouter, useParams } from 'next/navigation';
 import { changePassword } from '@/lib/api/users';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
+import styled from 'styled-components';
+import { FlexCenter, TextCenter, FormGroup, Label, Input, PrimaryButton } from '@/lib/styles';
+
+const ChangePasswordContainer = styled(FlexCenter)`
+  min-height: 100vh;
+  background-color: #f9fafb;
+  padding: 3rem 1rem;
+`;
+
+const ChangePasswordWrapper = styled.div`
+  max-width: 28rem;
+  width: 100%;
+`;
+
+const ChangePasswordForm = styled.form`
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const Header = styled(TextCenter)`
+  margin-bottom: 0;
+`;
+
+const Title = styled.h1`
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+`;
+
+const Subtitle = styled.p`
+  margin-top: 0.5rem;
+  color: #4b5563;
+`;
+
+const FieldsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
 
 export default function ChangePasswordPage() {
   const [newPassword, setNewPassword] = useState('');
@@ -43,69 +87,57 @@ export default function ChangePasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full">
-        <form
-          onSubmit={submitHandler}
-          className="bg-white rounded-2xl shadow-lg p-8 space-y-6"
-        >
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Ripristina Password</h1>
-            <p className="mt-2 text-gray-600">
+    <ChangePasswordContainer>
+      <ChangePasswordWrapper>
+        <ChangePasswordForm onSubmit={submitHandler}>
+          <Header>
+            <Title>Ripristina Password</Title>
+            <Subtitle>
               Inserisci la tua nuova password
-            </p>
-          </div>
+            </Subtitle>
+          </Header>
 
           {loading && <LoadingBox />}
           {error && <MessageBox variant="danger">{error}</MessageBox>}
 
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="newPassword"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+          <FieldsContainer>
+            <FormGroup>
+              <Label htmlFor="newPassword">
                 Nuova Password
-              </label>
-              <input
+              </Label>
+              <Input
                 type="password"
                 id="newPassword"
                 placeholder="Inserisci la nuova password (min. 6 caratteri)"
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
-            </div>
+            </FormGroup>
 
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+            <FormGroup>
+              <Label htmlFor="confirmPassword">
                 Conferma Password
-              </label>
-              <input
+              </Label>
+              <Input
                 type="password"
                 id="confirmPassword"
                 placeholder="Conferma la nuova password"
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
-            </div>
-          </div>
+            </FormGroup>
+          </FieldsContainer>
 
-          <button
+          <PrimaryButton
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {loading ? 'Salvataggio...' : 'Salva Nuova Password'}
-          </button>
-        </form>
-      </div>
-    </div>
+          </PrimaryButton>
+        </ChangePasswordForm>
+      </ChangePasswordWrapper>
+    </ChangePasswordContainer>
   );
 }

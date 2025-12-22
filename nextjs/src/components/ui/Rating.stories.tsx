@@ -87,51 +87,54 @@ export const NoReviewsShown: Story = {
   },
 };
 
+const ratingRowStyle = { display: 'flex', alignItems: 'center', gap: '1rem' };
+const ratingLabelStyle = { width: '2rem', fontSize: '0.875rem', color: '#6b7280' };
+
 export const AllRatings: Story = {
   render: () => (
-    <div className="space-y-4">
-      <div className="flex items-center gap-4">
-        <span className="w-8 text-sm text-gray-600">5.0</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={ratingRowStyle}>
+        <span style={ratingLabelStyle}>5.0</span>
         <Rating rating={5} numReviews={100} />
       </div>
-      <div className="flex items-center gap-4">
-        <span className="w-8 text-sm text-gray-600">4.5</span>
+      <div style={ratingRowStyle}>
+        <span style={ratingLabelStyle}>4.5</span>
         <Rating rating={4.5} numReviews={75} />
       </div>
-      <div className="flex items-center gap-4">
-        <span className="w-8 text-sm text-gray-600">4.0</span>
+      <div style={ratingRowStyle}>
+        <span style={ratingLabelStyle}>4.0</span>
         <Rating rating={4} numReviews={50} />
       </div>
-      <div className="flex items-center gap-4">
-        <span className="w-8 text-sm text-gray-600">3.5</span>
+      <div style={ratingRowStyle}>
+        <span style={ratingLabelStyle}>3.5</span>
         <Rating rating={3.5} numReviews={30} />
       </div>
-      <div className="flex items-center gap-4">
-        <span className="w-8 text-sm text-gray-600">3.0</span>
+      <div style={ratingRowStyle}>
+        <span style={ratingLabelStyle}>3.0</span>
         <Rating rating={3} numReviews={20} />
       </div>
-      <div className="flex items-center gap-4">
-        <span className="w-8 text-sm text-gray-600">2.5</span>
+      <div style={ratingRowStyle}>
+        <span style={ratingLabelStyle}>2.5</span>
         <Rating rating={2.5} numReviews={10} />
       </div>
-      <div className="flex items-center gap-4">
-        <span className="w-8 text-sm text-gray-600">2.0</span>
+      <div style={ratingRowStyle}>
+        <span style={ratingLabelStyle}>2.0</span>
         <Rating rating={2} numReviews={5} />
       </div>
-      <div className="flex items-center gap-4">
-        <span className="w-8 text-sm text-gray-600">1.5</span>
+      <div style={ratingRowStyle}>
+        <span style={ratingLabelStyle}>1.5</span>
         <Rating rating={1.5} numReviews={3} />
       </div>
-      <div className="flex items-center gap-4">
-        <span className="w-8 text-sm text-gray-600">1.0</span>
+      <div style={ratingRowStyle}>
+        <span style={ratingLabelStyle}>1.0</span>
         <Rating rating={1} numReviews={2} />
       </div>
-      <div className="flex items-center gap-4">
-        <span className="w-8 text-sm text-gray-600">0.5</span>
+      <div style={ratingRowStyle}>
+        <span style={ratingLabelStyle}>0.5</span>
         <Rating rating={0.5} numReviews={1} />
       </div>
-      <div className="flex items-center gap-4">
-        <span className="w-8 text-sm text-gray-600">0.0</span>
+      <div style={ratingRowStyle}>
+        <span style={ratingLabelStyle}>0.0</span>
         <Rating rating={0} numReviews={0} />
       </div>
     </div>

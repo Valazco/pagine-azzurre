@@ -2,10 +2,74 @@
 
 import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import styled from 'styled-components';
 import { useUserStore } from '@/lib/store/user';
 import { updateUserProfile } from '@/lib/api/users';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
+import { Container, PageTitle, CardBase, FormGroup, Label, Input, PrimaryButton, Divider } from '@/lib/styles';
+
+const ProfileContainer = styled(Container)`
+  max-width: 42rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+`;
+
+const ProfileCard = styled(CardBase)`
+  padding: 2rem;
+`;
+
+const FormSection = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+`;
+
+const PasswordSection = styled.div`
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+`;
+
+const SectionTitle = styled.h3`
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 1rem;
+`;
+
+const PasswordFields = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const AccountInfo = styled.div`
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+`;
+
+const InfoGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  font-size: 0.875rem;
+`;
+
+const InfoItem = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const InfoLabel = styled.span`
+  color: #6b7280;
+`;
+
+const InfoValue = styled.span<{ $color?: string }>`
+  margin-left: 0.5rem;
+  color: ${({ $color }) => $color || '#111827'};
+`;
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -58,103 +122,86 @@ export default function ProfilePage() {
   if (!userInfo) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Il Mio Profilo</h1>
+    <ProfileContainer>
+      <PageTitle>Il Mio Profilo</PageTitle>
 
-      <div className="bg-white rounded-2xl shadow-lg p-8">
+      <ProfileCard>
         {loading && <LoadingBox />}
         {success && <MessageBox variant="success">Profilo aggiornato con successo!</MessageBox>}
         {error && <MessageBox variant="danger">{error}</MessageBox>}
 
-        <form onSubmit={submitHandler} className="space-y-6 mt-4">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-              Username
-            </label>
-            <input
+        <FormSection onSubmit={submitHandler}>
+          <FormGroup>
+            <Label htmlFor="username">Username</Label>
+            <Input
               type="text"
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </FormGroup>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
+          <FormGroup>
+            <Label htmlFor="email">Email</Label>
+            <Input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </FormGroup>
 
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Cambia Password</h3>
+          <PasswordSection>
+            <SectionTitle>Cambia Password</SectionTitle>
 
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Nuova Password
-                </label>
-                <input
+            <PasswordFields>
+              <FormGroup>
+                <Label htmlFor="password">Nuova Password</Label>
+                <Input
                   type="password"
                   id="password"
                   placeholder="Lascia vuoto per non modificare"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-              </div>
+              </FormGroup>
 
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                  Conferma Nuova Password
-                </label>
-                <input
+              <FormGroup>
+                <Label htmlFor="confirmPassword">Conferma Nuova Password</Label>
+                <Input
                   type="password"
                   id="confirmPassword"
                   placeholder="Conferma la nuova password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-              </div>
-            </div>
-          </div>
+              </FormGroup>
+            </PasswordFields>
+          </PasswordSection>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
-          >
+          <PrimaryButton type="submit" disabled={loading}>
             {loading ? 'Aggiornamento...' : 'Aggiorna Profilo'}
-          </button>
-        </form>
+          </PrimaryButton>
+        </FormSection>
 
-        {/* Account Info */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Info Account</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="text-gray-500">Stato:</span>
-              <span className={`ml-2 ${userInfo.verified ? 'text-green-600' : 'text-yellow-600'}`}>
+        <AccountInfo>
+          <SectionTitle>Info Account</SectionTitle>
+          <InfoGrid>
+            <InfoItem>
+              <InfoLabel>Stato:</InfoLabel>
+              <InfoValue $color={userInfo.verified ? '#16a34a' : '#ca8a04'}>
                 {userInfo.verified ? 'Verificato' : 'Non verificato'}
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-500">Tipo:</span>
-              <span className="ml-2">
+              </InfoValue>
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>Tipo:</InfoLabel>
+              <InfoValue>
                 {userInfo.isAdmin ? 'Admin' : userInfo.isSeller ? 'Venditore' : 'Utente'}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              </InfoValue>
+            </InfoItem>
+          </InfoGrid>
+        </AccountInfo>
+      </ProfileCard>
+    </ProfileContainer>
   );
 }

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import SearchBox from './SearchBox';
+import { SearchBox } from './SearchBox';
 
 const meta: Meta<typeof SearchBox> = {
   title: 'Layout/SearchBox',
@@ -18,7 +18,7 @@ const meta: Meta<typeof SearchBox> = {
   },
   decorators: [
     (Story) => (
-      <div className="w-96 p-4">
+      <div style={{ width: '24rem', padding: '1rem' }}>
         <Story />
       </div>
     ),
@@ -33,7 +33,7 @@ export const Default: Story = {};
 export const InHeader: Story = {
   decorators: [
     (Story) => (
-      <div className="bg-white p-4 shadow-sm w-full max-w-xl">
+      <div style={{ backgroundColor: 'white', padding: '1rem', boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)', width: '100%', maxWidth: '36rem' }}>
         <Story />
       </div>
     ),
@@ -43,7 +43,7 @@ export const InHeader: Story = {
 export const MobileWidth: Story = {
   decorators: [
     (Story) => (
-      <div className="w-72 p-4">
+      <div style={{ width: '18rem', padding: '1rem' }}>
         <Story />
       </div>
     ),
@@ -53,7 +53,7 @@ export const MobileWidth: Story = {
 export const FullWidth: Story = {
   decorators: [
     (Story) => (
-      <div className="w-full p-4 bg-gray-100">
+      <div style={{ width: '100%', padding: '1rem', backgroundColor: '#f3f4f6' }}>
         <Story />
       </div>
     ),

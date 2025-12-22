@@ -5,12 +5,28 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCartStore } from '@/lib/store/cart';
 import { useUserStore } from '@/lib/store/user';
-import CartItem from '@/components/ui/CartItem';
-import MessageBox from '@/components/ui/MessageBox';
+import { CartItem, MessageBox } from '@/components/ui';
+import {
+  Container,
+  PageTitle,
+  TwoColumnGrid,
+  MainColumn,
+  SideColumn,
+  CardBase,
+  SectionTitle,
+  ItemList,
+  Divider,
+  SummaryRow,
+  SummaryLabel,
+  PriceVal,
+  PriceEuro,
+  PrimaryButton,
+  TextLink,
+} from '@/lib/styles';
 
 export default function CartPage() {
   const router = useRouter();
-  const { cartItems, itemsPrice, totalPriceVal } = useCartStore();
+  const { cartItems } = useCartStore();
   const { userInfo } = useUserStore();
 
   useEffect(() => {
@@ -30,68 +46,64 @@ export default function CartPage() {
   const totalEuro = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">
-        Processo di contatto all&apos;offerente
-      </h1>
+    <Container style={{ padding: '2rem 1rem' }}>
+      <PageTitle>Processo di contatto all&apos;offerente</PageTitle>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <TwoColumnGrid>
         {/* Cart Items */}
-        <div className="lg:col-span-2">
+        <MainColumn>
           {cartItems.length === 0 ? (
             <MessageBox variant="info">
               Il carrello è vuoto.{' '}
-              <Link href="/" className="text-blue-600 hover:underline font-medium">
-                Torna alla Vetrina
-              </Link>
+              <TextLink href="/">Torna alla Vetrina</TextLink>
             </MessageBox>
           ) : (
-            <ul className="space-y-4">
+            <ItemList>
               {cartItems.map((item) => (
                 <CartItem key={item.product} item={item} />
               ))}
-            </ul>
+            </ItemList>
           )}
-        </div>
+        </MainColumn>
 
         {/* Summary Card */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-4">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Riepilogo</h2>
+        <SideColumn>
+          <CardBase style={{ position: 'sticky', top: '1rem' }}>
+            <SectionTitle>Riepilogo</SectionTitle>
 
-            <p className="text-gray-600 mb-4">
+            <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
               Comincia cercando articoli che ti interessano
             </p>
 
-            <div className="border-t border-gray-100 pt-4 space-y-3">
-              <div className="flex justify-between text-gray-600">
-                <span>Articoli ({totalQty})</span>
-              </div>
+            <Divider>
+              <SummaryRow>
+                <SummaryLabel>Articoli ({totalQty})</SummaryLabel>
+              </SummaryRow>
 
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-gray-900">Totale VAL</span>
-                <span className="text-xl font-bold text-blue-600">☯ {totalVal}</span>
-              </div>
+              <SummaryRow>
+                <span style={{ fontWeight: 500, color: '#111827' }}>Totale VAL</span>
+                <PriceVal>☯ {totalVal}</PriceVal>
+              </SummaryRow>
 
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-gray-900">Totale Euro</span>
-                <span className="text-xl font-bold text-gray-900">€ {totalEuro.toFixed(2)}</span>
-              </div>
-            </div>
+              <SummaryRow>
+                <span style={{ fontWeight: 500, color: '#111827' }}>Totale Euro</span>
+                <PriceEuro>€ {totalEuro.toFixed(2)}</PriceEuro>
+              </SummaryRow>
+            </Divider>
 
-            <button
+            <PrimaryButton
               onClick={checkoutHandler}
               disabled={cartItems.length === 0}
-              className="w-full mt-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              style={{ marginTop: '1.5rem' }}
             >
               Continua per contattare l&apos;offerente
-            </button>
+            </PrimaryButton>
 
             {userInfo && !userInfo.hasAd && (
-              <div className="mt-4">
+              <div style={{ marginTop: '1rem' }}>
                 <MessageBox variant="warning">
                   Per contattare un offerente devi prima mettere un prodotto in vetrina.{' '}
-                  <Link href="/productlist/seller" className="underline font-medium">
+                  <Link href="/productlist/seller" style={{ textDecoration: 'underline', fontWeight: 500 }}>
                     Crea l&apos;annuncio adesso
                   </Link>
                 </MessageBox>
@@ -99,19 +111,19 @@ export default function CartPage() {
             )}
 
             {!userInfo && (
-              <div className="mt-4">
+              <div style={{ marginTop: '1rem' }}>
                 <MessageBox variant="warning">
                   Devi essere{' '}
-                  <Link href="/signin" className="underline font-medium">
+                  <Link href="/signin" style={{ textDecoration: 'underline', fontWeight: 500 }}>
                     loggato
                   </Link>{' '}
                   per continuare.
                 </MessageBox>
               </div>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+          </CardBase>
+        </SideColumn>
+      </TwoColumnGrid>
+    </Container>
   );
 }

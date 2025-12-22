@@ -3,3 +3,4 @@ export { theme, type Theme, type ThemeColors, type ThemeSpacing, type ThemeBorde
 export { GlobalStyles } from './GlobalStyles';
 export { ThemeProvider } from './ThemeProvider';
 export { StyledComponentsRegistry } from './StyledComponentsRegistry';
+export * from './pages';

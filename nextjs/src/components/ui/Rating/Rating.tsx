@@ -1,10 +1,14 @@
+'use client';
+
+import { RatingContainer, StarsContainer, Star, Caption } from './Rating.styles';
+
 interface RatingProps {
   rating: number;
   numReviews?: number;
   caption?: string;
 }
 
-export default function Rating({ rating, numReviews, caption }: RatingProps) {
+export function Rating({ rating, numReviews, caption }: RatingProps) {
   const renderStar = (position: number) => {
     if (rating >= position) {
       return '★'; // Full star
@@ -16,21 +20,23 @@ export default function Rating({ rating, numReviews, caption }: RatingProps) {
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex text-yellow-500 text-xl">
+    <RatingContainer>
+      <StarsContainer>
         {[1, 2, 3, 4, 5].map((position) => (
-          <span key={position}>{renderStar(position)}</span>
+          <Star key={position}>{renderStar(position)}</Star>
         ))}
-      </div>
+      </StarsContainer>
       {caption ? (
-        <span className="text-gray-600">{caption}</span>
+        <Caption>{caption}</Caption>
       ) : (
         numReviews !== undefined && (
-          <span className="text-gray-600 text-sm">
+          <Caption>
             {numReviews} {numReviews === 1 ? 'review' : 'reviews'}
-          </span>
+          </Caption>
         )
       )}
-    </div>
+    </RatingContainer>
   );
 }
+
+export default Rating;

@@ -33,7 +33,7 @@ const meta: Meta<typeof CheckoutSteps> = {
   },
   decorators: [
     (Story) => (
-      <div className="w-full max-w-3xl p-4">
+      <div style={{ width: '100%', maxWidth: '48rem', padding: '1rem' }}>
         <Story />
       </div>
     ),
@@ -118,25 +118,25 @@ export const TabletView: Story = {
 
 export const AllStages: Story = {
   render: () => (
-    <div className="space-y-8">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div>
-        <p className="text-sm text-gray-500 mb-2">Inizio checkout:</p>
+        <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>Inizio checkout:</p>
         <CheckoutSteps step1={false} />
       </div>
       <div>
-        <p className="text-sm text-gray-500 mb-2">Dopo login:</p>
+        <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>Dopo login:</p>
         <CheckoutSteps step1={true} />
       </div>
       <div>
-        <p className="text-sm text-gray-500 mb-2">Indirizzo inserito:</p>
+        <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>Indirizzo inserito:</p>
         <CheckoutSteps step1={true} step2={true} />
       </div>
       <div>
-        <p className="text-sm text-gray-500 mb-2">Pagamento selezionato:</p>
+        <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>Pagamento selezionato:</p>
         <CheckoutSteps step1={true} step2={true} step3={true} />
       </div>
       <div>
-        <p className="text-sm text-gray-500 mb-2">Ordine confermato:</p>
+        <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>Ordine confermato:</p>
         <CheckoutSteps step1={true} step2={true} step3={true} step4={true} />
       </div>
     </div>

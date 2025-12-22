@@ -29,8 +29,8 @@ export const Closed: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-screen bg-gray-100 p-8">
-        <p className="text-gray-600">La sidebar è chiusa. Usa i controlli per aprirla.</p>
+      <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6', padding: '2rem' }}>
+        <p style={{ color: '#6b7280' }}>La sidebar è chiusa. Usa i controlli per aprirla.</p>
         <Story />
       </div>
     ),
@@ -44,10 +44,10 @@ export const Open: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-screen bg-gray-100">
-        <div className="p-8">
-          <h1 className="text-xl font-bold mb-4">Contenuto della pagina</h1>
-          <p className="text-gray-600">
+      <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6' }}>
+        <div style={{ padding: '2rem' }}>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Contenuto della pagina</h1>
+          <p style={{ color: '#6b7280' }}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
             La sidebar è aperta e mostra le categorie dei prodotti.
           </p>
@@ -63,16 +63,16 @@ export const Interactive: Story = {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-      <div className="min-h-screen bg-gray-100">
-        <div className="p-8">
-          <h1 className="text-xl font-bold mb-4">Demo Interattiva</h1>
+      <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6' }}>
+        <div style={{ padding: '2rem' }}>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Demo Interattiva</h1>
           <button
             onClick={() => setIsOpen(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            style={{ padding: '0.5rem 1rem', backgroundColor: '#2563eb', color: 'white', borderRadius: '0.5rem', border: 'none', cursor: 'pointer' }}
           >
             Apri Sidebar
           </button>
-          <p className="mt-4 text-gray-600">
+          <p style={{ marginTop: '1rem', color: '#6b7280' }}>
             Clicca il pulsante sopra per aprire la sidebar.
             Puoi chiuderla cliccando sulla X, sull&apos;overlay o premendo ESC.
           </p>
@@ -95,7 +95,7 @@ export const MobileView: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-screen bg-gray-100">
+      <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6' }}>
         <Story />
       </div>
     ),

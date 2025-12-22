@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Footer from './Footer';
+import { Footer } from './Footer';
 
 const meta: Meta<typeof Footer> = {
   title: 'Layout/Footer',
@@ -15,10 +15,10 @@ const meta: Meta<typeof Footer> = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-screen flex flex-col">
-        <div className="flex-1 bg-white p-8">
-          <h1 className="text-xl font-bold mb-4">Contenuto della pagina</h1>
-          <p className="text-gray-600">Lorem ipsum dolor sit amet...</p>
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1, backgroundColor: 'white', padding: '2rem' }}>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Contenuto della pagina</h1>
+          <p style={{ color: '#6b7280' }}>Lorem ipsum dolor sit amet...</p>
         </div>
         <Story />
       </div>

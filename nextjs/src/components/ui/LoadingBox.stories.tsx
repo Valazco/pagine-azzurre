@@ -23,7 +23,7 @@ export const Default: Story = {};
 export const InContainer: Story = {
   decorators: [
     (Story) => (
-      <div className="w-96 h-64 border border-gray-200 rounded-lg flex items-center justify-center">
+      <div style={{ width: '24rem', height: '16rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Story />
       </div>
     ),
@@ -33,7 +33,7 @@ export const InContainer: Story = {
 export const FullPage: Story = {
   decorators: [
     (Story) => (
-      <div className="w-screen h-screen flex items-center justify-center bg-gray-50">
+      <div style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f9fafb' }}>
         <Story />
       </div>
     ),

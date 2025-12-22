@@ -1,13 +1,81 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import styled from 'styled-components';
 import { useUserStore } from '@/lib/store/user';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
+import { FormGroup, Label, Input, PrimaryButton } from '@/lib/styles';
 
-export default function SigninPage() {
+const PageWrapper = styled.div`
+  min-height: 100vh;
+  background-color: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+`;
+
+const FormContainer = styled.div`
+  max-width: 28rem;
+  width: 100%;
+`;
+
+const FormCard = styled.form`
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  padding: 2rem;
+`;
+
+const FormHeader = styled.div`
+  text-align: center;
+  margin-bottom: 1.5rem;
+`;
+
+const Title = styled.h1`
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+`;
+
+const Subtitle = styled.p`
+  margin-top: 0.5rem;
+  color: #6b7280;
+`;
+
+const FormFields = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+`;
+
+const LinksSection = styled.div`
+  text-align: center;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+`;
+
+const LinkText = styled.p`
+  color: #6b7280;
+`;
+
+const StyledLink = styled(Link)`
+  color: #2563eb;
+  font-weight: 500;
+
+  &:hover {
+    color: #1d4ed8;
+  }
+`;
+
+function SigninContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -37,90 +105,71 @@ export default function SigninPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full">
-        <form
-          onSubmit={submitHandler}
-          className="bg-white rounded-2xl shadow-lg p-8 space-y-6"
-        >
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Accedi</h1>
-            <p className="mt-2 text-gray-600">
-              Benvenuto su Pagine Azzurre
-            </p>
-          </div>
+    <PageWrapper>
+      <FormContainer>
+        <FormCard onSubmit={submitHandler}>
+          <FormHeader>
+            <Title>Accedi</Title>
+            <Subtitle>Benvenuto su Pagine Azzurre</Subtitle>
+          </FormHeader>
 
           {loading && <LoadingBox />}
           {error && <MessageBox variant="danger">{error}</MessageBox>}
 
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Indirizzo Email
-              </label>
-              <input
+          <FormFields>
+            <FormGroup>
+              <Label htmlFor="email">Indirizzo Email</Label>
+              <Input
                 type="email"
                 id="email"
                 placeholder="Inserisci la tua email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
-            </div>
+            </FormGroup>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Password
-              </label>
-              <input
+            <FormGroup>
+              <Label htmlFor="password">Password</Label>
+              <Input
                 type="password"
                 id="password"
                 placeholder="Inserisci la tua password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
-            </div>
-          </div>
+            </FormGroup>
+          </FormFields>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-          >
+          <PrimaryButton type="submit" disabled={loading}>
             {loading ? 'Accesso in corso...' : 'Accedi'}
-          </button>
+          </PrimaryButton>
 
-          <div className="text-center space-y-3 text-sm">
-            <p className="text-gray-600">
+          <LinksSection>
+            <LinkText>
               Nuovo utente?{' '}
-              <Link
-                href={`/register?redirect=${redirect}`}
-                className="text-blue-600 hover:text-blue-700 font-medium"
-              >
+              <StyledLink href={`/register?redirect=${redirect}`}>
                 Registrati
-              </Link>
-            </p>
-            <p className="text-gray-600">
+              </StyledLink>
+            </LinkText>
+            <LinkText>
               Hai dimenticato la password?{' '}
-              <Link
-                href="/password-recovery"
-                className="text-blue-600 hover:text-blue-700 font-medium"
-              >
+              <StyledLink href="/password-recovery">
                 Recupera password
-              </Link>
-            </p>
-          </div>
-        </form>
-      </div>
-    </div>
+              </StyledLink>
+            </LinkText>
+          </LinksSection>
+        </FormCard>
+      </FormContainer>
+    </PageWrapper>
+  );
+}
+
+export default function SigninPage() {
+  return (
+    <Suspense fallback={<PageWrapper><LoadingBox /></PageWrapper>}>
+      <SigninContent />
+    </Suspense>
   );
 }

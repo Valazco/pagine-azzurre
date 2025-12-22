@@ -8,6 +8,11 @@ import { useUserStore } from '@/lib/store/user';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
 import type { User } from '@/types';
+import {
+  Container,
+  PageTitle,
+  CardBase,
+} from '@/lib/styles';
 
 export default function UserListPage() {
   const router = useRouter();
@@ -50,60 +55,98 @@ export default function UserListPage() {
   if (!userInfo) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Gestione Utenti</h1>
+    <Container style={{ padding: '2rem 1rem' }}>
+      <PageTitle>Gestione Utenti</PageTitle>
 
       {loading ? (
         <LoadingBox />
       ) : error ? (
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+        <CardBase style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">ID</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Username</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Email</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Admin</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Seller</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Azioni</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>ID</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>Username</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>Email</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>Admin</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>Seller</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>Azioni</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody>
                 {users.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-600 font-mono">
+                  <tr
+                    key={user._id}
+                    style={{ borderBottom: '1px solid #f3f4f6', transition: 'background-color 0.15s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280', fontFamily: 'monospace' }}>
                       {user._id.slice(-8)}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{user.username}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{user.email}</td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                        user.isAdmin ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                      }`}>
+                    <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111827' }}>{user.username}</td>
+                    <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>{user.email}</td>
+                    <td style={{ padding: '1rem 1.5rem' }}>
+                      <span style={{
+                        display: 'inline-flex',
+                        padding: '0.25rem 0.5rem',
+                        fontSize: '0.75rem',
+                        fontWeight: '500',
+                        borderRadius: '9999px',
+                        backgroundColor: user.isAdmin ? '#dcfce7' : '#f3f4f6',
+                        color: user.isAdmin ? '#15803d' : '#6b7280'
+                      }}>
                         {user.isAdmin ? 'Sì' : 'No'}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                        user.isSeller ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
-                      }`}>
+                    <td style={{ padding: '1rem 1.5rem' }}>
+                      <span style={{
+                        display: 'inline-flex',
+                        padding: '0.25rem 0.5rem',
+                        fontSize: '0.75rem',
+                        fontWeight: '500',
+                        borderRadius: '9999px',
+                        backgroundColor: user.isSeller ? '#dbeafe' : '#f3f4f6',
+                        color: user.isSeller ? '#1d4ed8' : '#6b7280'
+                      }}>
                         {user.isSeller ? 'Sì' : 'No'}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
+                    <td style={{ padding: '1rem 1.5rem' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <Link
                           href={`/user/${user._id}/edit`}
-                          className="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors"
+                          style={{
+                            padding: '0.25rem 0.75rem',
+                            fontSize: '0.875rem',
+                            backgroundColor: '#dbeafe',
+                            color: '#2563eb',
+                            borderRadius: '0.25rem',
+                            textDecoration: 'none',
+                            transition: 'background-color 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#bfdbfe'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#dbeafe'}
                         >
                           Modifica
                         </Link>
                         <button
                           onClick={() => handleDelete(user._id)}
-                          className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors"
+                          style={{
+                            padding: '0.25rem 0.75rem',
+                            fontSize: '0.875rem',
+                            backgroundColor: '#fee2e2',
+                            color: '#dc2626',
+                            borderRadius: '0.25rem',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fecaca'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fee2e2'}
                         >
                           Elimina
                         </button>
@@ -114,8 +157,8 @@ export default function UserListPage() {
               </tbody>
             </table>
           </div>
-        </div>
+        </CardBase>
       )}
-    </div>
+    </Container>
   );
 }

@@ -3,10 +3,53 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import styled from 'styled-components';
 import { useCartStore } from '@/lib/store/cart';
 import { useUserStore } from '@/lib/store/user';
 import CheckoutSteps from '@/components/ui/CheckoutSteps';
 import MessageBox from '@/components/ui/MessageBox';
+import { Container, CardBase, FormGroup, Label, Input, PrimaryButton } from '@/lib/styles';
+
+const ShippingContainer = styled(Container)`
+  max-width: 42rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+`;
+
+const ShippingCard = styled(CardBase)`
+  padding: 2rem;
+`;
+
+const Title = styled.h1`
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+  margin-bottom: 1.5rem;
+`;
+
+const FormSection = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const GridRow = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+`;
+
+const ReadOnlyInput = styled(Input)`
+  background-color: #f9fafb;
+  color: #6b7280;
+  border-color: #e5e7eb;
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: underline;
+  font-weight: 500;
+`;
 
 export default function ShippingPage() {
   const router = useRouter();
@@ -43,134 +86,108 @@ export default function ShippingPage() {
   if (!userInfo) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <ShippingContainer>
       <CheckoutSteps step1 step2 />
 
-      <div className="bg-white rounded-2xl shadow-lg p-8">
-        <h1 className="text-2xl font-bold text-gray-900 text-center mb-6">
-          Indirizzo di Spedizione e Contatto
-        </h1>
+      <ShippingCard>
+        <Title>Indirizzo di Spedizione e Contatto</Title>
 
-        <form onSubmit={submitHandler} className="space-y-6">
-          <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
-              Nome e Cognome *
-            </label>
-            <input
+        <FormSection onSubmit={submitHandler}>
+          <FormGroup>
+            <Label htmlFor="fullName">Nome e Cognome *</Label>
+            <Input
               type="text"
               id="fullName"
               placeholder="Inserisci nome e cognome"
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </FormGroup>
 
-          <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-              Indirizzo *
-            </label>
-            <input
+          <FormGroup>
+            <Label htmlFor="address">Indirizzo *</Label>
+            <Input
               type="text"
               id="address"
               placeholder="Inserisci indirizzo"
               required
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </FormGroup>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
-                Città *
-              </label>
-              <input
+          <GridRow>
+            <FormGroup>
+              <Label htmlFor="city">Città *</Label>
+              <Input
                 type="text"
                 id="city"
                 placeholder="Inserisci città"
                 required
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
+            </FormGroup>
 
-            <div>
-              <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">
-                CAP *
-              </label>
-              <input
+            <FormGroup>
+              <Label htmlFor="postalCode">CAP *</Label>
+              <Input
                 type="text"
                 id="postalCode"
                 placeholder="Codice postale"
                 required
                 value={postalCode}
                 onChange={(e) => setPostalCode(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
-          </div>
+            </FormGroup>
+          </GridRow>
 
-          <div>
-            <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
-              Nazione
-            </label>
-            <input
+          <FormGroup>
+            <Label htmlFor="country">Nazione</Label>
+            <ReadOnlyInput
               type="text"
               id="country"
               value="🇮🇹 Italia"
               readOnly
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-600"
             />
-          </div>
+          </FormGroup>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email 📧
-            </label>
-            <input
+          <FormGroup>
+            <Label htmlFor="email">Email 📧</Label>
+            <ReadOnlyInput
               type="email"
               id="email"
               value={userInfo.email}
               readOnly
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-600"
             />
-          </div>
+          </FormGroup>
 
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-              Telefono 📞
-            </label>
-            <input
+          <FormGroup>
+            <Label htmlFor="phone">Telefono 📞</Label>
+            <Input
               type="tel"
               id="phone"
               placeholder="Inserisci numero di telefono"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </FormGroup>
 
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-          >
+          <PrimaryButton type="submit">
             Continua
-          </button>
+          </PrimaryButton>
 
           {!userInfo.hasAd && (
             <MessageBox variant="warning">
               Per contattare un offerente devi prima mettere un prodotto in vetrina.{' '}
-              <Link href="/productlist/seller" className="underline font-medium">
+              <StyledLink href="/productlist/seller">
                 Crea l&apos;annuncio adesso
-              </Link>
+              </StyledLink>
             </MessageBox>
           )}
-        </form>
-      </div>
-    </div>
+        </FormSection>
+      </ShippingCard>
+    </ShippingContainer>
   );
 }

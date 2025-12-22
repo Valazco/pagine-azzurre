@@ -23,14 +23,14 @@ const meta: Meta<typeof CookieConsent> = {
         localStorage.removeItem('pagineazzurre-cookies');
       }
       return (
-        <div className="min-h-screen bg-gray-100 p-8">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-4">Pagina di esempio</h1>
-            <p className="text-gray-600 mb-4">
+        <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6', padding: '2rem' }}>
+          <div style={{ maxWidth: '56rem', margin: '0 auto' }}>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>Pagina di esempio</h1>
+            <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
               Questo è un contenuto di esempio per mostrare come il banner dei cookie
               appare nella parte inferiore della pagina.
             </p>
-            <p className="text-gray-600">
+            <p style={{ color: '#6b7280' }}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
               tempor incididunt ut labore et dolore magna aliqua.
             </p>

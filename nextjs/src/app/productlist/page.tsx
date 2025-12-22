@@ -4,12 +4,138 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import styled from 'styled-components';
 import { getProducts, deleteProduct, createProduct } from '@/lib/api/products';
 import { useUserStore } from '@/lib/store/user';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
 import Pagination from '@/components/ui/Pagination';
+import { Container, PageTitle, FlexBetween, PrimaryButton, LoadingContainer, ErrorContainer, EmptyContainer } from '@/lib/styles';
 import type { Product } from '@/types';
+
+// Styled Components
+const TableCard = styled.div`
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid #f3f4f6;
+  overflow: hidden;
+`;
+
+const TableWrapper = styled.div`
+  overflow-x: auto;
+`;
+
+const Table = styled.table`
+  width: 100%;
+`;
+
+const TableHead = styled.thead`
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+`;
+
+const TableRow = styled.tr`
+  &:hover {
+    background-color: #f9fafb;
+  }
+`;
+
+const TableHeader = styled.th`
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+`;
+
+const TableBody = styled.tbody`
+  & tr {
+    border-bottom: 1px solid #f3f4f6;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+`;
+
+const TableCell = styled.td`
+  padding: 1rem 1.5rem;
+`;
+
+const ProductImage = styled.div`
+  position: relative;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: #f3f4f6;
+`;
+
+const ProductName = styled.div`
+  font-size: 0.875rem;
+  color: #111827;
+  max-width: 20rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const PriceCell = styled.div`
+  font-size: 0.875rem;
+`;
+
+const PriceEuro = styled.span`
+  color: #111827;
+`;
+
+const PriceVAL = styled.span`
+  color: #2563eb;
+  margin-left: 0.5rem;
+`;
+
+const CategoryText = styled.div`
+  font-size: 0.875rem;
+  color: #6b7280;
+`;
+
+const StockText = styled.span<{ $inStock: boolean }>`
+  font-size: 0.875rem;
+  color: ${({ $inStock }) => ($inStock ? '#059669' : '#dc2626')};
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+const EditButton = styled(Link)`
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  background-color: #dbeafe;
+  color: #2563eb;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #bfdbfe;
+  }
+`;
+
+const DeleteButton = styled.button`
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  background-color: #fee2e2;
+  color: #dc2626;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #fecaca;
+  }
+`;
 
 export default function ProductListPage() {
   const router = useRouter();
@@ -68,93 +194,97 @@ export default function ProductListPage() {
   if (!userInfo) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Gestione Prodotti</h1>
-        <button
+    <Container style={{ padding: '2rem 1rem' }}>
+      <FlexBetween style={{ marginBottom: '2rem' }}>
+        <PageTitle style={{ marginBottom: 0 }}>Gestione Prodotti</PageTitle>
+        <PrimaryButton
           onClick={handleCreate}
           disabled={actionLoading}
-          className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
         >
           {actionLoading ? 'Creazione...' : 'Nuovo Prodotto'}
-        </button>
-      </div>
+        </PrimaryButton>
+      </FlexBetween>
 
       {loading ? (
-        <LoadingBox />
+        <LoadingContainer>
+          <LoadingBox />
+        </LoadingContainer>
       ) : error ? (
-        <MessageBox variant="danger">{error}</MessageBox>
+        <ErrorContainer>
+          <MessageBox variant="danger">{error}</MessageBox>
+        </ErrorContainer>
       ) : products.length === 0 ? (
-        <MessageBox variant="info">Nessun prodotto trovato</MessageBox>
+        <EmptyContainer>
+          <MessageBox variant="info">Nessun prodotto trovato</MessageBox>
+        </EmptyContainer>
       ) : (
         <>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+          <TableCard>
+            <TableWrapper>
+              <Table>
+                <TableHead>
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Immagine</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Nome</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Prezzo</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Categoria</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Stock</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Azioni</th>
+                    <TableHeader>Immagine</TableHeader>
+                    <TableHeader>Nome</TableHeader>
+                    <TableHeader>Prezzo</TableHeader>
+                    <TableHeader>Categoria</TableHeader>
+                    <TableHeader>Stock</TableHeader>
+                    <TableHeader>Azioni</TableHeader>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
+                </TableHead>
+                <TableBody>
                   {products.map((product) => (
-                    <tr key={product._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
-                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
+                    <TableRow key={product._id}>
+                      <TableCell>
+                        <ProductImage>
                           <Image
                             src={product.image?.[0] || '/img-not-found.png'}
                             alt={product.name}
                             fill
-                            className="object-cover"
+                            style={{ objectFit: 'cover' }}
                           />
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                        {product.name}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        <span className="text-gray-900">€{product.priceEuro}</span>
-                        <span className="text-blue-600 ml-2">☯{product.priceVal}</span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{product.category}</td>
-                      <td className="px-6 py-4 text-sm">
-                        <span className={product.countInStock > 0 ? 'text-green-600' : 'text-red-600'}>
+                        </ProductImage>
+                      </TableCell>
+                      <TableCell>
+                        <ProductName>{product.name}</ProductName>
+                      </TableCell>
+                      <TableCell>
+                        <PriceCell>
+                          <PriceEuro>€{product.priceEuro}</PriceEuro>
+                          <PriceVAL>☯{product.priceVal}</PriceVAL>
+                        </PriceCell>
+                      </TableCell>
+                      <TableCell>
+                        <CategoryText>{product.category}</CategoryText>
+                      </TableCell>
+                      <TableCell>
+                        <StockText $inStock={product.countInStock > 0}>
                           {product.countInStock}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex gap-2">
-                          <Link
-                            href={`/product/${product._id}/edit`}
-                            className="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors"
-                          >
+                        </StockText>
+                      </TableCell>
+                      <TableCell>
+                        <ActionButtons>
+                          <EditButton href={`/product/${product._id}/edit`}>
                             Modifica
-                          </Link>
-                          <button
-                            onClick={() => handleDelete(product._id)}
-                            className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors"
-                          >
+                          </EditButton>
+                          <DeleteButton onClick={() => handleDelete(product._id)}>
                             Elimina
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+                          </DeleteButton>
+                        </ActionButtons>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                </TableBody>
+              </Table>
+            </TableWrapper>
+          </TableCard>
 
           {pages > 1 && (
             <Pagination currentPage={page} totalPages={pages} basePath="/productlist/page" />
           )}
         </>
       )}
-    </div>
+    </Container>
   );
 }

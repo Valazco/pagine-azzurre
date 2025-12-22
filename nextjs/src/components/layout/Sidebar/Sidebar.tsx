@@ -1,17 +1,27 @@
 'use client';
 
-import Link from 'next/link';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import LoadingBox from '@/components/ui/LoadingBox';
-import MessageBox from '@/components/ui/MessageBox';
+import { LoadingBox } from '@/components/ui/LoadingBox';
+import { MessageBox } from '@/components/ui/MessageBox';
+import {
+  Overlay,
+  SidebarContainer,
+  SidebarHeader,
+  SidebarTitle,
+  CloseButton,
+  SidebarNav,
+  CategoryList,
+  CategoryItem,
+  CategoryLink,
+} from './Sidebar.styles';
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,61 +70,47 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <>
       {/* Overlay */}
-      <div
-        className={`
-          fixed inset-0 bg-black/50 z-40 transition-opacity duration-300
-          ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
-        `}
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      <Overlay $isOpen={isOpen} onClick={onClose} aria-hidden="true" />
 
       {/* Sidebar */}
-      <aside
-        className={`
-          fixed top-0 left-0 h-full w-72 bg-white shadow-xl z-50
-          transform transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-        `}
+      <SidebarContainer
+        $isOpen={isOpen}
         role="dialog"
         aria-modal="true"
         aria-label="Menu categorie"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Categorie</h2>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Chiudi menu"
-          >
+        <SidebarHeader>
+          <SidebarTitle>Categorie</SidebarTitle>
+          <CloseButton onClick={onClose} aria-label="Chiudi menu">
             <X size={20} />
-          </button>
-        </div>
+          </CloseButton>
+        </SidebarHeader>
 
         {/* Categories List */}
-        <nav className="p-4 overflow-y-auto max-h-[calc(100vh-80px)]">
+        <SidebarNav>
           {loading ? (
             <LoadingBox />
           ) : error ? (
             <MessageBox variant="danger">{error}</MessageBox>
           ) : (
-            <ul className="space-y-1">
+            <CategoryList>
               {categories.map((category) => (
-                <li key={category}>
-                  <Link
+                <CategoryItem key={category}>
+                  <CategoryLink
                     href={`/search/category/${encodeURIComponent(category)}`}
                     onClick={onClose}
-                    className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     {formatCategory(category)}
-                  </Link>
-                </li>
+                  </CategoryLink>
+                </CategoryItem>
               ))}
-            </ul>
+            </CategoryList>
           )}
-        </nav>
-      </aside>
+        </SidebarNav>
+      </SidebarContainer>
     </>
   );
 }
+
+export default Sidebar;

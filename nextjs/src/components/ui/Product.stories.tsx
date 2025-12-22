@@ -147,7 +147,7 @@ export const HighPrice: Story = {
 
 export const ProductGrid: Story = {
   render: () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 max-w-5xl">
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', padding: '1.5rem', maxWidth: '64rem' }}>
       <Product product={baseProduct} />
       <Product
         product={{

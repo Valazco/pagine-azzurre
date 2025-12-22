@@ -28,6 +28,8 @@ export interface CardProps {
   children: React.ReactNode;
   /** Additional className */
   className?: string;
+  /** Inline styles */
+  style?: React.CSSProperties;
 }
 
 export function Card({
@@ -38,6 +40,7 @@ export function Card({
   onClick,
   children,
   className,
+  style,
 }: CardProps) {
   return (
     <StyledCard
@@ -47,6 +50,7 @@ export function Card({
       $clickable={clickable || !!onClick}
       onClick={onClick}
       className={className}
+      style={style}
     >
       {children}
     </StyledCard>

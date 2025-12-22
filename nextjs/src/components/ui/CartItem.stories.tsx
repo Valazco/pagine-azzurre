@@ -19,7 +19,7 @@ const meta: Meta<typeof CartItem> = {
   },
   decorators: [
     (Story) => (
-      <ul className="w-full max-w-2xl list-none p-0 m-0">
+      <ul style={{ width: '100%', maxWidth: '42rem', listStyle: 'none', padding: 0, margin: 0 }}>
         <Story />
       </ul>
     ),
@@ -88,7 +88,7 @@ export const HighPriceItem: Story = {
 
 export const MultipleItems: Story = {
   render: () => (
-    <ul className="w-full max-w-2xl space-y-4 list-none p-0 m-0">
+    <ul style={{ width: '100%', maxWidth: '42rem', display: 'flex', flexDirection: 'column', gap: '1rem', listStyle: 'none', padding: 0, margin: 0 }}>
       <CartItem
         item={{
           ...baseItem,

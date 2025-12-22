@@ -1,9 +1,72 @@
+'use client';
+
+import styled from 'styled-components';
+import { Container, PageTitle, CardBase } from '@/lib/styles';
+
+const PrivacyContainer = styled(Container)`
+  max-width: 56rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+`;
+
+const ProseCard = styled(CardBase)`
+  border-radius: 1rem;
+  padding: 2rem;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #111827;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #111827;
+  }
+
+  p {
+    margin-bottom: 1rem;
+    line-height: 1.75;
+    color: #4b5563;
+  }
+
+  ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+
+    li {
+      margin-bottom: 0.5rem;
+      line-height: 1.75;
+      color: #4b5563;
+    }
+  }
+
+  a {
+    color: #2563eb;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
 export default function PrivacyPage() {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
+    <PrivacyContainer>
+      <PageTitle>Privacy Policy</PageTitle>
 
-      <div className="bg-white rounded-2xl shadow-lg p-8 prose prose-gray max-w-none">
+      <ProseCard>
         <h2>Informativa sulla Privacy</h2>
         <p>
           Pagine Azzurre rispetta la privacy dei suoi utenti e si impegna a proteggerla.
@@ -48,11 +111,11 @@ export default function PrivacyPage() {
         <h3>Contatti</h3>
         <p>
           Per qualsiasi domanda sulla privacy, contattaci tramite il sito{' '}
-          <a href="https://valazco.it" target="_blank" rel="noopener noreferrer" className="text-blue-600">
+          <a href="https://valazco.it" target="_blank" rel="noopener noreferrer">
             valazco.it
           </a>
         </p>
-      </div>
-    </div>
+      </ProseCard>
+    </PrivacyContainer>
   );
 }

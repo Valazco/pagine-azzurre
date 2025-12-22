@@ -3,10 +3,69 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import styled from 'styled-components';
 import { useCartStore } from '@/lib/store/cart';
 import { useUserStore } from '@/lib/store/user';
 import CheckoutSteps from '@/components/ui/CheckoutSteps';
 import MessageBox from '@/components/ui/MessageBox';
+import { Container, CardBase, FormGroup, Label, Select, PrimaryButton, SecondaryButton } from '@/lib/styles';
+
+const PaymentContainer = styled(Container)`
+  max-width: 42rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+`;
+
+const PaymentCard = styled(CardBase)`
+  padding: 2rem;
+`;
+
+const Title = styled.h1`
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+  margin-bottom: 0.5rem;
+`;
+
+const Subtitle = styled.p`
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 1.5rem;
+`;
+
+const FormSection = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const ValDisplay = styled.div`
+  background-color: #eff6ff;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+`;
+
+const ValLabel = styled.p`
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+`;
+
+const ValAmount = styled.p`
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #2563eb;
+`;
+
+const TransferButton = styled(PrimaryButton)`
+  padding: 1rem 1.5rem;
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: underline;
+  font-weight: 500;
+`;
 
 export default function PaymentPage() {
   const router = useRouter();
@@ -39,99 +98,80 @@ export default function PaymentPage() {
   if (!userInfo) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <PaymentContainer>
       <CheckoutSteps step1 step2 step3 />
 
       {phase === 1 && (
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
-            Metodo di Pagamento
-          </h1>
-          <p className="text-gray-600 text-center mb-6">
+        <PaymentCard>
+          <Title>Metodo di Pagamento</Title>
+          <Subtitle>
             Il metodo di pagamento deve essere concordato direttamente con l&apos;offerente
-          </p>
+          </Subtitle>
 
-          <form onSubmit={handlePhase1Submit} className="space-y-6">
-            <div>
-              <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700 mb-2">
-                Seleziona il metodo di pagamento
-              </label>
-              <select
+          <FormSection onSubmit={handlePhase1Submit}>
+            <FormGroup>
+              <Label htmlFor="paymentMethod">Seleziona il metodo di pagamento</Label>
+              <Select
                 id="paymentMethod"
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="Val">Val ☯️</option>
                 <option value="Euro" disabled>Euro (attualmente inattivo)</option>
                 <option value="Crypto" disabled>Monete speculative (attualmente inattivo)</option>
                 <option value="Dinastycoin">Dinastycoin</option>
                 <option value="Concordato">Da concordare</option>
-              </select>
-            </div>
+              </Select>
+            </FormGroup>
 
-            <button
-              type="submit"
-              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-            >
+            <PrimaryButton type="submit">
               Prosegui
-            </button>
+            </PrimaryButton>
 
             {!userInfo.hasAd && (
               <MessageBox variant="warning">
                 Per contattare un offerente devi prima mettere un prodotto in vetrina.{' '}
-                <Link href="/productlist/seller" className="underline font-medium">
+                <StyledLink href="/productlist/seller">
                   Crea l&apos;annuncio adesso
-                </Link>
+                </StyledLink>
               </MessageBox>
             )}
-          </form>
-        </div>
+          </FormSection>
+        </PaymentCard>
       )}
 
       {phase === 2 && (
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
-            Conferma Pagamento VAL
-          </h1>
-          <p className="text-gray-600 text-center mb-6">
+        <PaymentCard>
+          <Title>Conferma Pagamento VAL</Title>
+          <Subtitle>
             Trasferisci i VAL richiesti per questo scambio
-          </p>
+          </Subtitle>
 
-          <form onSubmit={handlePhase2Submit} className="space-y-6">
-            <div className="bg-blue-50 rounded-xl p-6 text-center">
-              <p className="text-gray-600 mb-2">Totale VAL da trasferire</p>
-              <p className="text-4xl font-bold text-blue-600">
-                ☯ {totalVal}
-              </p>
-            </div>
+          <FormSection onSubmit={handlePhase2Submit}>
+            <ValDisplay>
+              <ValLabel>Totale VAL da trasferire</ValLabel>
+              <ValAmount>☯ {totalVal}</ValAmount>
+            </ValDisplay>
 
-            <button
-              type="submit"
-              className="w-full py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-            >
+            <TransferButton type="submit">
               Trasferisci {totalVal} VAL all&apos;offerente
-            </button>
+            </TransferButton>
 
-            <button
-              type="button"
-              onClick={() => setPhase(1)}
-              className="w-full py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-            >
+            <SecondaryButton type="button" onClick={() => setPhase(1)}>
               Torna indietro
-            </button>
+            </SecondaryButton>
 
             {!userInfo.hasAd && (
               <MessageBox variant="warning">
                 Per contattare un offerente devi prima mettere un prodotto in vetrina.{' '}
-                <Link href="/productlist/seller" className="underline font-medium">
+                <StyledLink href="/productlist/seller">
                   Crea l&apos;annuncio adesso
-                </Link>
+                </StyledLink>
               </MessageBox>
             )}
-          </form>
-        </div>
+          </FormSection>
+        </PaymentCard>
       )}
-    </div>
+    </PaymentContainer>
   );
 }

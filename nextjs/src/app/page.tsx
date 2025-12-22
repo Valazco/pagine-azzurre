@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   LoadingBox,
   MessageBox,
@@ -12,11 +11,23 @@ import {
 } from '@/components/ui';
 import { getProducts } from '@/lib/api/products';
 import type { Product as ProductType } from '@/types';
+import {
+  PageContainer,
+  ContentContainer,
+  TextCenter,
+  PageTitle,
+  PageSubtitle,
+  FlexWrap,
+  FilterButton,
+  LoadingContainer,
+  ErrorContainer,
+  EmptyContainer,
+  GridContainer,
+} from '@/lib/styles';
 
 type Section = 'offro' | 'cerco' | 'propongo' | 'avviso' | 'dono';
 
 export default function HomePage() {
-  const router = useRouter();
   const [section, setSection] = useState<Section>('offro');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,80 +72,71 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <PageContainer>
       {/* Welcome Banner */}
       <WelcomeBanner />
 
       {/* Cookie Consent */}
       <CookieConsent />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <ContentContainer>
         {/* Section Title */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-            Ultime Attività
-          </h1>
-          <p className="text-gray-600 text-lg">
+        <TextCenter>
+          <PageTitle>Ultime Attività</PageTitle>
+          <PageSubtitle>
             Esplora le nostre sezioni di prodotti e servizi
-          </p>
-        </div>
+          </PageSubtitle>
+        </TextCenter>
 
         {/* Section Filters */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
+        <FlexWrap>
           {sectionButtons.map((btn) => (
-            <button
+            <FilterButton
               key={btn.value}
               onClick={() => setSection(btn.value)}
-              className={`
-                px-6 py-2.5 rounded-full font-medium text-sm transition-all duration-200
-                ${
-                  section === btn.value
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-105'
-                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300 hover:shadow-md'
-                }
-              `}
+              $isActive={section === btn.value}
             >
               {btn.label}
-            </button>
+            </FilterButton>
           ))}
-        </div>
+        </FlexWrap>
 
         {/* Loading State */}
         {loading && (
-          <div className="py-12">
+          <LoadingContainer>
             <LoadingBox />
-          </div>
+          </LoadingContainer>
         )}
 
         {/* Error State */}
         {error && !loading && (
-          <div className="max-w-2xl mx-auto py-8">
+          <ErrorContainer>
             <MessageBox variant="danger">{error}</MessageBox>
-          </div>
+          </ErrorContainer>
         )}
 
         {/* Products Grid */}
         {!loading && !error && (
           <>
             {filteredProducts.length === 0 ? (
-              <div className="max-w-2xl mx-auto py-12">
+              <EmptyContainer>
                 <MessageBox variant="info">
                   Nessun prodotto trovato in questa sezione
                 </MessageBox>
-              </div>
+              </EmptyContainer>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+              <GridContainer style={{ marginBottom: '3rem' }}>
                 {filteredProducts.map((product) => (
                   <Product key={product._id} product={product} />
                 ))}
-              </div>
+              </GridContainer>
             )}
 
             {/* Pagination */}
             <Pagination currentPage={page} totalPages={pages} />
           </>
         )}
-      </div>
-    </div>
+      </ContentContainer>
+    </PageContainer>
   );
 }

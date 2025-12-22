@@ -8,6 +8,12 @@ import { useUserStore } from '@/lib/store/user';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
 import type { Order } from '@/types';
+import {
+  Container,
+  PageTitle,
+  CardBase,
+  TextLink,
+} from '@/lib/styles';
 
 export default function OrderHistoryPage() {
   const router = useRouter();
@@ -40,8 +46,8 @@ export default function OrderHistoryPage() {
   if (!userInfo) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Storico Ordini</h1>
+    <Container style={{ padding: '2rem 1rem' }}>
+      <PageTitle>Storico Ordini</PageTitle>
 
       {loading ? (
         <LoadingBox />
@@ -50,64 +56,71 @@ export default function OrderHistoryPage() {
       ) : orders.length === 0 ? (
         <MessageBox variant="info">
           Non hai ancora effettuato ordini.{' '}
-          <Link href="/" className="text-blue-600 hover:underline">
+          <TextLink href="/">
             Vai alla vetrina
-          </Link>
+          </TextLink>
         </MessageBox>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+        <CardBase style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">ID</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Data</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Totale</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Pagato</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Consegnato</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Azioni</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>ID</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>Data</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>Totale</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>Pagato</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>Consegnato</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#111827' }}>Azioni</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody>
                 {orders.map((order) => (
-                  <tr key={order._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-600 font-mono">
+                  <tr
+                    key={order._id}
+                    style={{ borderBottom: '1px solid #f3f4f6', transition: 'background-color 0.15s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280', fontFamily: 'monospace' }}>
                       {order._id.slice(-8)}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111827' }}>
                       {new Date(order.createdAt).toLocaleDateString('it-IT')}
                     </td>
-                    <td className="px-6 py-4 text-sm">
-                      <span className="text-blue-600 font-medium">
+                    <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem' }}>
+                      <span style={{ color: '#2563eb', fontWeight: '500' }}>
                         ☯ {order.orderItems.reduce((a, c) => a + c.priceVal * c.qty, 0)}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td style={{ padding: '1rem 1.5rem' }}>
                       {order.isPaid ? (
-                        <span className="inline-flex px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                        <span style={{ display: 'inline-flex', padding: '0.25rem 0.5rem', fontSize: '0.75rem', fontWeight: '500', backgroundColor: '#dcfce7', color: '#15803d', borderRadius: '9999px' }}>
                           {new Date(order.paidAt!).toLocaleDateString('it-IT')}
                         </span>
                       ) : (
-                        <span className="inline-flex px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded-full">
+                        <span style={{ display: 'inline-flex', padding: '0.25rem 0.5rem', fontSize: '0.75rem', fontWeight: '500', backgroundColor: '#fef3c7', color: '#a16207', borderRadius: '9999px' }}>
                           In attesa
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td style={{ padding: '1rem 1.5rem' }}>
                       {order.isDelivered ? (
-                        <span className="inline-flex px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                        <span style={{ display: 'inline-flex', padding: '0.25rem 0.5rem', fontSize: '0.75rem', fontWeight: '500', backgroundColor: '#dcfce7', color: '#15803d', borderRadius: '9999px' }}>
                           {new Date(order.deliveredAt!).toLocaleDateString('it-IT')}
                         </span>
                       ) : (
-                        <span className="inline-flex px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
+                        <span style={{ display: 'inline-flex', padding: '0.25rem 0.5rem', fontSize: '0.75rem', fontWeight: '500', backgroundColor: '#f3f4f6', color: '#374151', borderRadius: '9999px' }}>
                           No
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td style={{ padding: '1rem 1.5rem' }}>
                       <Link
                         href={`/order/${order._id}`}
-                        className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                        style={{ color: '#2563eb', fontWeight: '500', fontSize: '0.875rem', textDecoration: 'none' }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = '#1d4ed8'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = '#2563eb'}
                       >
                         Dettaglio
                       </Link>
@@ -117,8 +130,8 @@ export default function OrderHistoryPage() {
               </tbody>
             </table>
           </div>
-        </div>
+        </CardBase>
       )}
-    </div>
+    </Container>
   );
 }

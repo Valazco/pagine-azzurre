@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import PreHeader from './PreHeader';
+import { PreHeader } from './PreHeader';
 
 const meta: Meta<typeof PreHeader> = {
   title: 'Layout/PreHeader',

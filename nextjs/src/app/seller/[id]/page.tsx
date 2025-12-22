@@ -2,13 +2,70 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import styled from 'styled-components';
 import { getUserProfile } from '@/lib/api/users';
 import { getProducts } from '@/lib/api/products';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
 import Product from '@/components/ui/Product';
 import Rating from '@/components/ui/Rating';
+import {
+  Container,
+  SectionTitle,
+  CardBase,
+  GridContainer,
+  LoadingContainer,
+  ErrorContainer,
+  EmptyContainer
+} from '@/lib/styles';
 import type { User, Product as ProductType } from '@/types';
+
+// Styled Components
+const SellerCard = styled(CardBase)`
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  margin-bottom: 2rem;
+`;
+
+const SellerInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+`;
+
+const SellerLogo = styled.img`
+  width: 8rem;
+  height: 8rem;
+  border-radius: 0.75rem;
+  object-fit: cover;
+`;
+
+const SellerDetails = styled.div`
+  flex: 1;
+`;
+
+const SellerName = styled.h1`
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+`;
+
+const SellerDescription = styled.p`
+  color: #6b7280;
+  margin-top: 1rem;
+`;
+
+const ProductsGrid = styled(GridContainer)`
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+`;
 
 export default function SellerPage() {
   const params = useParams();
@@ -43,50 +100,51 @@ export default function SellerPage() {
     }
   };
 
-  if (loading) return <LoadingBox />;
-  if (error) return <MessageBox variant="danger">{error}</MessageBox>;
-  if (!seller) return <MessageBox variant="danger">Venditore non trovato</MessageBox>;
+  if (loading) return <LoadingContainer><LoadingBox /></LoadingContainer>;
+  if (error) return <ErrorContainer><MessageBox variant="danger">{error}</MessageBox></ErrorContainer>;
+  if (!seller) return <ErrorContainer><MessageBox variant="danger">Venditore non trovato</MessageBox></ErrorContainer>;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <Container style={{ padding: '2rem 1rem' }}>
       {/* Seller Info */}
-      <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-        <div className="flex flex-col md:flex-row items-start gap-6">
+      <SellerCard>
+        <SellerInfo>
           {seller.seller?.logo && (
-            <img
+            <SellerLogo
               src={seller.seller.logo}
               alt={seller.seller.name}
-              className="w-32 h-32 rounded-xl object-cover"
             />
           )}
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <SellerDetails>
+            <SellerName>
               {seller.seller?.name || seller.username}
-            </h1>
+            </SellerName>
             {seller.seller && (
-              <div className="mb-4">
+              <div style={{ marginBottom: '1rem' }}>
                 <Rating rating={seller.seller.rating} numReviews={seller.seller.numReviews} />
               </div>
             )}
             {seller.seller?.description && (
-              <p className="text-gray-600">{seller.seller.description}</p>
+              <SellerDescription>{seller.seller.description}</SellerDescription>
             )}
-          </div>
-        </div>
-      </div>
+          </SellerDetails>
+        </SellerInfo>
+      </SellerCard>
 
       {/* Seller Products */}
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Prodotti del Venditore</h2>
+      <SectionTitle>Prodotti del Venditore</SectionTitle>
 
       {products.length === 0 ? (
-        <MessageBox variant="info">Questo venditore non ha ancora prodotti</MessageBox>
+        <EmptyContainer>
+          <MessageBox variant="info">Questo venditore non ha ancora prodotti</MessageBox>
+        </EmptyContainer>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <ProductsGrid>
           {products.map((product) => (
             <Product key={product._id} product={product} />
           ))}
-        </div>
+        </ProductsGrid>
       )}
-    </div>
+    </Container>
   );
 }

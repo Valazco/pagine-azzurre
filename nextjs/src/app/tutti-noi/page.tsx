@@ -1,68 +1,152 @@
+'use client';
+
 import Link from 'next/link';
+import styled from 'styled-components';
+import { Container, PageTitle, CardBase } from '@/lib/styles';
+
+const TuttiNoiContainer = styled(Container)`
+  max-width: 56rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+`;
+
+const ContentCard = styled(CardBase)`
+  border-radius: 1rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`;
+
+const Section = styled.section`
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: #4b5563;
+    line-height: 1.75;
+  }
+
+  ul {
+    list-style-type: disc;
+    list-style-position: inside;
+    color: #4b5563;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+  }
+`;
+
+const PrimaryLinkButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #1d4ed8;
+  }
+`;
+
+const SecondaryLinkButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #2563eb;
+  color: #2563eb;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #eff6ff;
+  }
+`;
 
 export default function TuttiNoiPage() {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Tutti Noi</h1>
+    <TuttiNoiContainer>
+      <PageTitle>Tutti Noi</PageTitle>
 
-      <div className="bg-white rounded-2xl shadow-lg p-8 space-y-8">
-        <section>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Chi Siamo</h2>
-          <p className="text-gray-600 leading-relaxed">
+      <ContentCard>
+        <Section>
+          <h2>Chi Siamo</h2>
+          <p>
             Pagine Azzurre è una piattaforma di scambio dove barattiamo e scambiamo con meno Euro e più VAL.
             Siamo una comunità che favorisce ogni scambio di prodotti, servizi e competenze
             finalizzati alla emancipazione umana.
           </p>
-        </section>
+        </Section>
 
-        <section>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">La Nostra Missione</h2>
-          <p className="text-gray-600 leading-relaxed">
+        <Section>
+          <h2>La Nostra Missione</h2>
+          <p>
             Promuoviamo uno scambio solidale di beni per vantaggi comuni.
             Crediamo nella sovranità e nella consapevolezza economica,
             utilizzando convenzioni monetarie alternative come i VAL.
           </p>
-        </section>
+        </Section>
 
-        <section>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Il VAL</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
+        <Section>
+          <h2>Il VAL</h2>
+          <p>
             Il VAL è la nostra unità di scambio alternativa. Preferiamo l&apos;utilizzo di:
           </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2">
+          <ul>
             <li>VAL - Valorizzatore dell&apos;Azione Concordata</li>
             <li>Crediti</li>
             <li>G1</li>
             <li>RISO</li>
           </ul>
-        </section>
+        </Section>
 
-        <section>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Val.Az.Co</h2>
-          <p className="text-gray-600 leading-relaxed">
+        <Section>
+          <h2>Val.Az.Co</h2>
+          <p>
             Pagine Azzurre è un&apos;attività promossa e gestita dal{' '}
             <strong>Banco dei Cittadini Volontari del Val.Az.Co</strong>{' '}
             (VALorizzatore dell&apos;AZione COncordata).
           </p>
-        </section>
+        </Section>
 
-        <div className="pt-6 border-t border-gray-200 flex flex-col sm:flex-row gap-4">
-          <a
+        <ButtonContainer>
+          <PrimaryLinkButton
             href="https://valazco.it"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
           >
             Visita valazco.it
-          </a>
-          <Link
-            href="/newsletter"
-            className="inline-flex items-center justify-center px-6 py-3 border border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
-          >
+          </PrimaryLinkButton>
+          <SecondaryLinkButton href="/newsletter">
             Iscriviti alla Newsletter
-          </Link>
-        </div>
-      </div>
-    </div>
+          </SecondaryLinkButton>
+        </ButtonContainer>
+      </ContentCard>
+    </TuttiNoiContainer>
   );
 }

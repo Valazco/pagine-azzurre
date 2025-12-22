@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import PostHeader from './PostHeader';
+import { PostHeader } from './PostHeader';
 
 const meta: Meta<typeof PostHeader> = {
   title: 'Layout/PostHeader',

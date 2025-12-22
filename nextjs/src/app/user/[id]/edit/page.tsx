@@ -7,6 +7,83 @@ import { useUserStore } from '@/lib/store/user';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
 import type { User } from '@/types';
+import styled from 'styled-components';
+import { Container, PageTitle, CardBase, FormGroup, Label, Input, PrimaryButton, SecondaryButton } from '@/lib/styles';
+
+const UserEditContainer = styled(Container)`
+  max-width: 42rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+`;
+
+const EditCard = styled(CardBase)`
+  border-radius: 1rem;
+  padding: 2rem;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+`;
+
+const CheckboxGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const CheckboxLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #2563eb;
+    border-radius: 0.25rem;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+    }
+  }
+
+  span {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 1rem;
+  padding-top: 1rem;
+`;
+
+const FlexButton = styled(PrimaryButton)`
+  flex: 1;
+`;
+
+const CancelButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #d1d5db;
+  color: #374151;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  background-color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+`;
 
 export default function UserEditPage() {
   const params = useParams();
@@ -71,76 +148,70 @@ export default function UserEditPage() {
   if (!userInfo) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Modifica Utente</h1>
+    <UserEditContainer>
+      <PageTitle>Modifica Utente</PageTitle>
 
-      <div className="bg-white rounded-2xl shadow-lg p-8">
+      <EditCard>
         {error && <MessageBox variant="danger">{error}</MessageBox>}
         {success && <MessageBox variant="success">Utente aggiornato!</MessageBox>}
 
-        <form onSubmit={submitHandler} className="space-y-6 mt-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Username *</label>
-            <input
+        <Form onSubmit={submitHandler}>
+          <FormGroup>
+            <Label>Username *</Label>
+            <Input
               type="text"
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </FormGroup>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-            <input
+          <FormGroup>
+            <Label>Email *</Label>
+            <Input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </FormGroup>
 
-          <div className="space-y-4">
-            <label className="flex items-center gap-3 cursor-pointer">
+          <CheckboxGroup>
+            <CheckboxLabel>
               <input
                 type="checkbox"
                 checked={isAdmin}
                 onChange={(e) => setIsAdmin(e.target.checked)}
-                className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
               />
-              <span className="text-sm font-medium text-gray-700">Amministratore</span>
-            </label>
+              <span>Amministratore</span>
+            </CheckboxLabel>
 
-            <label className="flex items-center gap-3 cursor-pointer">
+            <CheckboxLabel>
               <input
                 type="checkbox"
                 checked={isSeller}
                 onChange={(e) => setIsSeller(e.target.checked)}
-                className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
               />
-              <span className="text-sm font-medium text-gray-700">Venditore</span>
-            </label>
-          </div>
+              <span>Venditore</span>
+            </CheckboxLabel>
+          </CheckboxGroup>
 
-          <div className="flex gap-4 pt-4">
-            <button
+          <ButtonGroup>
+            <FlexButton
               type="submit"
               disabled={updateLoading}
-              className="flex-1 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
               {updateLoading ? 'Salvataggio...' : 'Salva Modifiche'}
-            </button>
-            <button
+            </FlexButton>
+            <CancelButton
               type="button"
               onClick={() => router.push('/userlist')}
-              className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
             >
               Annulla
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+            </CancelButton>
+          </ButtonGroup>
+        </Form>
+      </EditCard>
+    </UserEditContainer>
   );
 }

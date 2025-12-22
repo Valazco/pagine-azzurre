@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import styled from 'styled-components';
 import { getProducts, getProductCategories, type ProductFilters } from '@/lib/api/products';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
@@ -10,9 +11,119 @@ import Product from '@/components/ui/Product';
 import Rating from '@/components/ui/Rating';
 import Pagination from '@/components/ui/Pagination';
 import { prices, ratings } from '@/lib/utils/constants';
+import {
+  Container,
+  CardBase,
+  StickyCard,
+  Select,
+  GridContainer,
+  LoadingContainer,
+  ErrorContainer,
+  EmptyContainer
+} from '@/lib/styles';
 import type { Product as ProductType } from '@/types';
 
-export default function SearchPage() {
+// Styled Components
+const SearchHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+`;
+
+const ResultsCount = styled.div`
+  color: #6b7280;
+  font-weight: 500;
+`;
+
+const SortContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const SortLabel = styled.label`
+  font-size: 0.875rem;
+  color: #6b7280;
+`;
+
+const SearchLayout = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+  }
+`;
+
+const Sidebar = styled.aside`
+  flex-shrink: 0;
+
+  @media (min-width: 1024px) {
+    width: 16rem;
+  }
+`;
+
+const SidebarCard = styled(StickyCard)`
+  padding: 1.5rem;
+`;
+
+const FilterSection = styled.div`
+  margin-bottom: 1.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const FilterTitle = styled.h3`
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.75rem;
+`;
+
+const FilterList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const FilterItem = styled.li`
+  margin-bottom: 0.5rem;
+`;
+
+const FilterLink = styled(Link)<{ $active?: boolean }>`
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  font-weight: ${({ $active }) => ($active ? '500' : '400')};
+  background-color: ${({ $active }) => ($active ? '#eff6ff' : 'transparent')};
+  color: ${({ $active }) => ($active ? '#2563eb' : '#6b7280')};
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+`;
+
+const MainContent = styled.main`
+  flex: 1;
+`;
+
+const ProductsGrid = styled(GridContainer)`
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+`;
+
+function SearchContent() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -112,138 +223,125 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <Container style={{ padding: '2rem 1rem' }}>
       {/* Header with results count and sort */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <div className="text-gray-600">
+      <SearchHeader>
+        <ResultsCount>
           {loading ? (
             'Caricamento...'
           ) : error ? (
             ''
           ) : (
-            <span className="font-medium">{products.length} risultati</span>
+            <span>{products.length} risultati</span>
           )}
-        </div>
+        </ResultsCount>
 
-        <div className="flex items-center gap-2">
-          <label htmlFor="sort" className="text-sm text-gray-600">
-            Ordina per
-          </label>
-          <select
+        <SortContainer>
+          <SortLabel htmlFor="sort">Ordina per</SortLabel>
+          <Select
             id="sort"
             value={order}
             onChange={(e) => router.push(buildFilterUrl({ order: e.target.value, page: 1 }))}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="newest">Più recenti</option>
             <option value="lowest">Prezzo: dal più basso</option>
             <option value="highest">Prezzo: dal più alto</option>
             <option value="toprated">Migliori recensioni</option>
-          </select>
-        </div>
-      </div>
+          </Select>
+        </SortContainer>
+      </SearchHeader>
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <SearchLayout>
         {/* Filters Sidebar */}
-        <aside className="lg:w-64 flex-shrink-0">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6 sticky top-4">
+        <Sidebar>
+          <SidebarCard>
             {/* Categories */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Categorie</h3>
+            <FilterSection>
+              <FilterTitle>Categorie</FilterTitle>
               {categoriesLoading ? (
                 <LoadingBox />
               ) : (
-                <ul className="space-y-2">
-                  <li>
-                    <Link
+                <FilterList>
+                  <FilterItem>
+                    <FilterLink
                       href={buildFilterUrl({ category: '', page: 1 })}
-                      className={`block px-3 py-2 rounded-lg transition-colors ${
-                        !category
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-600 hover:bg-gray-50'
-                      }`}
+                      $active={!category}
                     >
                       Tutte le categorie
-                    </Link>
-                  </li>
+                    </FilterLink>
+                  </FilterItem>
                   {categories.map((c) => (
-                    <li key={c}>
-                      <Link
+                    <FilterItem key={c}>
+                      <FilterLink
                         href={buildFilterUrl({ category: c, page: 1 })}
-                        className={`block px-3 py-2 rounded-lg transition-colors ${
-                          c === category
-                            ? 'bg-blue-50 text-blue-600 font-medium'
-                            : 'text-gray-600 hover:bg-gray-50'
-                        }`}
+                        $active={c === category}
                       >
                         {c.charAt(0).toUpperCase() + c.slice(1).toLowerCase()}
-                      </Link>
-                    </li>
+                      </FilterLink>
+                    </FilterItem>
                   ))}
-                </ul>
+                </FilterList>
               )}
-            </div>
+            </FilterSection>
 
             {/* Price Range */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Prezzo</h3>
-              <ul className="space-y-2">
+            <FilterSection>
+              <FilterTitle>Prezzo</FilterTitle>
+              <FilterList>
                 {prices.map((p) => (
-                  <li key={p.name}>
-                    <Link
+                  <FilterItem key={p.name}>
+                    <FilterLink
                       href={buildFilterUrl({ min: p.min, max: p.max, page: 1 })}
-                      className={`block px-3 py-2 rounded-lg transition-colors ${
-                        `${p.min}-${p.max}` === `${min}-${max}`
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-600 hover:bg-gray-50'
-                      }`}
+                      $active={`${p.min}-${p.max}` === `${min}-${max}`}
                     >
                       {p.name}
-                    </Link>
-                  </li>
+                    </FilterLink>
+                  </FilterItem>
                 ))}
-              </ul>
-            </div>
+              </FilterList>
+            </FilterSection>
 
             {/* Rating Filter */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Valutazione</h3>
-              <ul className="space-y-2">
+            <FilterSection>
+              <FilterTitle>Valutazione</FilterTitle>
+              <FilterList>
                 {ratings.map((r) => (
-                  <li key={r.rating}>
-                    <Link
+                  <FilterItem key={r.rating}>
+                    <FilterLink
                       href={buildFilterUrl({ rating: r.rating, page: 1 })}
-                      className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
-                        r.rating === ratingFilter
-                          ? 'bg-blue-50'
-                          : 'hover:bg-gray-50'
-                      }`}
+                      $active={r.rating === ratingFilter}
                     >
                       <Rating rating={r.rating} caption=" & +" />
-                    </Link>
-                  </li>
+                    </FilterLink>
+                  </FilterItem>
                 ))}
-              </ul>
-            </div>
-          </div>
-        </aside>
+              </FilterList>
+            </FilterSection>
+          </SidebarCard>
+        </Sidebar>
 
         {/* Products Grid */}
-        <main className="flex-1">
+        <MainContent>
           {loading ? (
-            <LoadingBox />
+            <LoadingContainer>
+              <LoadingBox />
+            </LoadingContainer>
           ) : error ? (
-            <MessageBox variant="danger">{error}</MessageBox>
+            <ErrorContainer>
+              <MessageBox variant="danger">{error}</MessageBox>
+            </ErrorContainer>
           ) : products.length === 0 ? (
-            <MessageBox variant="info">Nessun prodotto trovato</MessageBox>
+            <EmptyContainer>
+              <MessageBox variant="info">Nessun prodotto trovato</MessageBox>
+            </EmptyContainer>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <ProductsGrid>
                 {products.map(
                   (product) =>
                     product && <Product key={product._id} product={product} />
                 )}
-              </div>
+              </ProductsGrid>
 
               {/* Pagination */}
               {pages > 1 && (
@@ -255,8 +353,16 @@ export default function SearchPage() {
               )}
             </>
           )}
-        </main>
-      </div>
-    </div>
+        </MainContent>
+      </SearchLayout>
+    </Container>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<Container><LoadingBox /></Container>}>
+      <SearchContent />
+    </Suspense>
   );
 }

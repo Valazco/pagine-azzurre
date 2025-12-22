@@ -1,4 +1,12 @@
-import Link from 'next/link';
+'use client';
+
+import {
+  PaginationNav,
+  PageNumbersContainer,
+  NavButton,
+  PageLink,
+  Ellipsis,
+} from './Pagination.styles';
 
 interface PaginationProps {
   currentPage: number;
@@ -6,7 +14,7 @@ interface PaginationProps {
   basePath?: string;
 }
 
-export default function Pagination({
+export function Pagination({
   currentPage,
   totalPages,
   basePath = '/pageNumber',
@@ -14,22 +22,21 @@ export default function Pagination({
   if (totalPages <= 1) return null;
 
   return (
-    <nav className="flex justify-center items-center gap-2 my-12" aria-label="Pagination">
+    <PaginationNav aria-label="Pagination">
       {/* Previous Button */}
       {currentPage > 1 && (
-        <Link
+        <NavButton
           href={`${basePath}/${currentPage - 1}`}
-          className="flex items-center justify-center w-10 h-10 rounded-lg bg-white border-2 border-gray-200 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-all"
           aria-label="Previous page"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-        </Link>
+        </NavButton>
       )}
 
       {/* Page Numbers */}
-      <div className="flex items-center gap-2">
+      <PageNumbersContainer>
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
           // Show first, last, current, and adjacent pages
           const showPage =
@@ -43,51 +50,38 @@ export default function Pagination({
             (pageNum === currentPage + 2 && currentPage < totalPages - 2);
 
           if (showEllipsis) {
-            return (
-              <span
-                key={pageNum}
-                className="flex items-center justify-center w-10 h-10 text-gray-400"
-              >
-                ...
-              </span>
-            );
+            return <Ellipsis key={pageNum}>...</Ellipsis>;
           }
 
           if (!showPage) return null;
 
           return (
-            <Link
+            <PageLink
               key={pageNum}
               href={`${basePath}/${pageNum}`}
-              className={`
-                flex items-center justify-center w-10 h-10 rounded-lg font-medium transition-all
-                ${
-                  pageNum === currentPage
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-500 hover:text-blue-600'
-                }
-              `}
+              $isActive={pageNum === currentPage}
               aria-label={`Page ${pageNum}`}
               aria-current={pageNum === currentPage ? 'page' : undefined}
             >
               {pageNum}
-            </Link>
+            </PageLink>
           );
         })}
-      </div>
+      </PageNumbersContainer>
 
       {/* Next Button */}
       {currentPage < totalPages && (
-        <Link
+        <NavButton
           href={`${basePath}/${currentPage + 1}`}
-          className="flex items-center justify-center w-10 h-10 rounded-lg bg-white border-2 border-gray-200 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-all"
           aria-label="Next page"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-        </Link>
+        </NavButton>
       )}
-    </nav>
+    </PaginationNav>
   );
 }
+
+export default Pagination;

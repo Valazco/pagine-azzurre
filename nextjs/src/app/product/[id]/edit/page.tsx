@@ -2,10 +2,64 @@
 
 import { useState, useEffect, FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import styled from 'styled-components';
 import { getProduct, updateProduct } from '@/lib/api/products';
 import { useUserStore } from '@/lib/store/user';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
+import {
+  Container,
+  PageTitle,
+  CardBase,
+  PrimaryButton,
+  SecondaryButton,
+  FormGroup,
+  Label,
+  Input,
+  Select,
+  Textarea,
+  LoadingContainer
+} from '@/lib/styles';
+
+// Styled Components
+const FormCard = styled(CardBase)`
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+`;
+
+const FormGrid = styled.div<{ $twoCols?: boolean }>`
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+
+  ${({ $twoCols }) =>
+    $twoCols &&
+    `
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  `}
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+`;
+
+const CheckboxLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+`;
+
+const Checkbox = styled.input`
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #2563eb;
+  border-radius: 0.25rem;
+`;
 
 export default function ProductEditPage() {
   const params = useParams();
@@ -78,133 +132,127 @@ export default function ProductEditPage() {
     }
   };
 
-  if (loading) return <LoadingBox />;
+  if (loading) return <LoadingContainer><LoadingBox /></LoadingContainer>;
   if (!userInfo) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Modifica Prodotto</h1>
+    <Container style={{ maxWidth: '42rem', padding: '2rem 1rem' }}>
+      <PageTitle>Modifica Prodotto</PageTitle>
 
-      <div className="bg-white rounded-2xl shadow-lg p-8">
+      <FormCard>
         {error && <MessageBox variant="danger">{error}</MessageBox>}
         {success && <MessageBox variant="success">Prodotto aggiornato!</MessageBox>}
 
-        <form onSubmit={submitHandler} className="space-y-6 mt-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
-            <input
+        <form onSubmit={submitHandler} style={{ marginTop: '1rem' }}>
+          <FormGroup>
+            <Label>Nome *</Label>
+            <Input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </FormGroup>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Prezzo Euro *</label>
-              <input
+          <FormGrid $twoCols>
+            <FormGroup>
+              <Label>Prezzo Euro *</Label>
+              <Input
                 type="number"
                 step="0.01"
                 required
                 value={priceEuro}
                 onChange={(e) => setPriceEuro(Number(e.target.value))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Prezzo VAL *</label>
-              <input
+            </FormGroup>
+            <FormGroup>
+              <Label>Prezzo VAL *</Label>
+              <Input
                 type="number"
                 required
                 value={priceVal}
                 onChange={(e) => setPriceVal(Number(e.target.value))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
-          </div>
+            </FormGroup>
+          </FormGrid>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Categoria *</label>
-              <input
+          <FormGrid $twoCols>
+            <FormGroup>
+              <Label>Categoria *</Label>
+              <Input
                 type="text"
                 required
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Quantità *</label>
-              <input
+            </FormGroup>
+            <FormGroup>
+              <Label>Quantità *</Label>
+              <Input
                 type="number"
                 required
                 value={countInStock}
                 onChange={(e) => setCountInStock(Number(e.target.value))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
-          </div>
+            </FormGroup>
+          </FormGrid>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sezione</label>
-              <select
+          <FormGrid $twoCols>
+            <FormGroup>
+              <Label>Sezione</Label>
+              <Select
                 value={section}
                 onChange={(e) => setSection(e.target.value as typeof section)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="offro">Offro</option>
                 <option value="cerco">Cerco</option>
                 <option value="propongo">Propongo</option>
                 <option value="avviso">Avviso</option>
                 <option value="dono">Dono</option>
-              </select>
-            </div>
-            <div className="flex items-center">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
+              </Select>
+            </FormGroup>
+            <FormGroup style={{ display: 'flex', alignItems: 'center' }}>
+              <CheckboxLabel>
+                <Checkbox
                   type="checkbox"
                   checked={isService}
                   onChange={(e) => setIsService(e.target.checked)}
-                  className="w-5 h-5 text-blue-600 rounded"
                 />
-                <span className="text-sm font-medium text-gray-700">È un servizio</span>
-              </label>
-            </div>
-          </div>
+                <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
+                  È un servizio
+                </span>
+              </CheckboxLabel>
+            </FormGroup>
+          </FormGrid>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Descrizione *</label>
-            <textarea
+          <FormGroup>
+            <Label>Descrizione *</Label>
+            <Textarea
               rows={5}
               required
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </FormGroup>
 
-          <div className="flex gap-4">
-            <button
+          <ButtonGroup>
+            <PrimaryButton
               type="submit"
               disabled={updateLoading}
-              className="flex-1 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              style={{ flex: 1 }}
             >
               {updateLoading ? 'Salvataggio...' : 'Salva Modifiche'}
-            </button>
-            <button
+            </PrimaryButton>
+            <SecondaryButton
               type="button"
               onClick={() => router.push('/productlist')}
-              className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+              style={{ padding: '0.75rem 1.5rem' }}
             >
               Annulla
-            </button>
-          </div>
+            </SecondaryButton>
+          </ButtonGroup>
         </form>
-      </div>
-    </div>
+      </FormCard>
+    </Container>
   );
 }

@@ -10,6 +10,16 @@ import CheckoutSteps from '@/components/ui/CheckoutSteps';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
 import apiClient from '@/lib/api/client';
+import {
+  Container,
+  TwoColumnGrid,
+  MainColumn,
+  SideColumn,
+  CardBase,
+  StickyCard,
+  PrimaryButton,
+  TextLink,
+} from '@/lib/styles';
 
 export default function PlaceOrderPage() {
   const router = useRouter();
@@ -61,128 +71,130 @@ export default function PlaceOrderPage() {
   if (!userInfo) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <Container style={{ padding: '2rem 1rem' }}>
       <CheckoutSteps step1 step2 step3 step4 />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <TwoColumnGrid style={{ gridTemplateColumns: '1fr', gap: '2rem', marginTop: '2rem' }}>
         {/* Order Details */}
-        <div className="lg:col-span-2 space-y-6">
+        <MainColumn style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* Shipping Info */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Spedizione</h2>
-            <div className="text-gray-600 space-y-1">
-              <p><span className="font-medium text-gray-900">Nome:</span> {shippingAddress?.fullName}</p>
+          <CardBase>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#111827', marginBottom: '1rem' }}>Spedizione</h2>
+            <div style={{ color: '#6b7280', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <p><span style={{ fontWeight: '500', color: '#111827' }}>Nome:</span> {shippingAddress?.fullName}</p>
               <p>
-                <span className="font-medium text-gray-900">Indirizzo:</span>{' '}
+                <span style={{ fontWeight: '500', color: '#111827' }}>Indirizzo:</span>{' '}
                 {shippingAddress?.address}, {shippingAddress?.city}, {shippingAddress?.postalCode}, {shippingAddress?.country}
               </p>
               {shippingAddress?.phone && (
-                <p><span className="font-medium text-gray-900">Telefono:</span> {shippingAddress.phone}</p>
+                <p><span style={{ fontWeight: '500', color: '#111827' }}>Telefono:</span> {shippingAddress.phone}</p>
               )}
             </div>
-          </div>
+          </CardBase>
 
           {/* Payment Method */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Metodo di Pagamento</h2>
-            <p className="text-gray-600">
-              <span className="font-medium text-gray-900">Metodo:</span> Da concordare con l&apos;offerente
+          <CardBase>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#111827', marginBottom: '1rem' }}>Metodo di Pagamento</h2>
+            <p style={{ color: '#6b7280' }}>
+              <span style={{ fontWeight: '500', color: '#111827' }}>Metodo:</span> Da concordare con l&apos;offerente
             </p>
-          </div>
+          </CardBase>
 
           {/* Order Items */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Articoli dell&apos;ordine</h2>
-            <ul className="divide-y divide-gray-100">
+          <CardBase>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#111827', marginBottom: '1rem' }}>Articoli dell&apos;ordine</h2>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', borderTop: '1px solid #f3f4f6' }}>
               {cartItems.map((item) => (
-                <li key={item.product} className="py-4 flex items-center gap-4">
-                  <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                <li key={item.product} style={{ padding: '1rem 0', display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: '1px solid #f3f4f6' }}>
+                  <div style={{ position: 'relative', width: '4rem', height: '4rem', borderRadius: '0.5rem', overflow: 'hidden', backgroundColor: '#f3f4f6', flexShrink: 0 }}>
                     <Image
                       src={item.image || '/img-not-found.png'}
                       alt={item.name}
                       fill
-                      className="object-cover"
+                      style={{ objectFit: 'cover' }}
                     />
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <Link
                       href={`/product/${item.product}`}
-                      className="text-gray-900 font-medium hover:text-blue-600 line-clamp-1"
+                      style={{ color: '#111827', fontWeight: '500', textDecoration: 'none', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = '#2563eb'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = '#111827'}
                     >
                       {item.name}
                     </Link>
                   </div>
-                  <div className="text-right text-sm">
-                    <p className="text-gray-900">
+                  <div style={{ textAlign: 'right', fontSize: '0.875rem' }}>
+                    <p style={{ color: '#111827', margin: 0 }}>
                       {item.qty} x €{item.price.toFixed(2)} = €{(item.qty * item.price).toFixed(2)}
                     </p>
-                    <p className="text-blue-600">
+                    <p style={{ color: '#2563eb', margin: 0 }}>
                       {item.qty} x ☯{item.priceVal} = ☯{item.qty * item.priceVal}
                     </p>
                   </div>
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
+          </CardBase>
+        </MainColumn>
 
         {/* Order Summary */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 sticky top-4">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Riepilogo Ordine</h2>
+        <SideColumn>
+          <StickyCard style={{ boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#111827', marginBottom: '1.5rem' }}>Riepilogo Ordine</h2>
 
-            <div className="space-y-4">
-              <div className="flex justify-between text-gray-600">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6b7280' }}>
                 <span>Articoli</span>
-                <div className="text-right">
-                  <span className="block">€ {itemsPriceEuro.toFixed(2)}</span>
-                  <span className="block text-blue-600">☯ {itemsPriceVal}</span>
+                <div style={{ textAlign: 'right' }}>
+                  <span style={{ display: 'block' }}>€ {itemsPriceEuro.toFixed(2)}</span>
+                  <span style={{ display: 'block', color: '#2563eb' }}>☯ {itemsPriceVal}</span>
                 </div>
               </div>
 
-              <div className="flex justify-between text-gray-600">
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6b7280' }}>
                 <span>Spedizione</span>
                 <span>Da concordare</span>
               </div>
 
-              <div className="border-t border-gray-100 pt-4 flex justify-between">
-                <span className="font-semibold text-gray-900">Totale</span>
-                <div className="text-right">
-                  <span className="block text-xl font-bold text-gray-900">€ {itemsPriceEuro.toFixed(2)}</span>
-                  <span className="block text-lg font-bold text-blue-600">☯ {itemsPriceVal}</span>
+              <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontWeight: '600', color: '#111827' }}>Totale</span>
+                <div style={{ textAlign: 'right' }}>
+                  <span style={{ display: 'block', fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>€ {itemsPriceEuro.toFixed(2)}</span>
+                  <span style={{ display: 'block', fontSize: '1.125rem', fontWeight: '700', color: '#2563eb' }}>☯ {itemsPriceVal}</span>
                 </div>
               </div>
             </div>
 
             {error && (
-              <div className="mt-4">
+              <div style={{ marginTop: '1rem' }}>
                 <MessageBox variant="danger">{error}</MessageBox>
               </div>
             )}
 
-            <button
+            <PrimaryButton
               onClick={placeOrderHandler}
               disabled={cartItems.length === 0 || loading}
-              className="w-full mt-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              style={{ marginTop: '1.5rem' }}
             >
               {loading ? 'Invio in corso...' : 'Invia richiesta all\'offerente'}
-            </button>
+            </PrimaryButton>
 
             {loading && <LoadingBox />}
 
             {!userInfo.hasAd && (
-              <div className="mt-4">
+              <div style={{ marginTop: '1rem' }}>
                 <MessageBox variant="warning">
                   Per contattare un offerente devi prima mettere un prodotto in vetrina.{' '}
-                  <Link href="/productlist/seller" className="underline font-medium">
+                  <Link href="/productlist/seller" style={{ textDecoration: 'underline', fontWeight: '500' }}>
                     Crea l&apos;annuncio adesso
                   </Link>
                 </MessageBox>
               </div>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+          </StickyCard>
+        </SideColumn>
+      </TwoColumnGrid>
+    </Container>
   );
 }

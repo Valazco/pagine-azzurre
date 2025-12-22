@@ -9,6 +9,16 @@ import { useUserStore } from '@/lib/store/user';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
 import type { Order } from '@/types';
+import {
+  Container,
+  PageTitle,
+  TwoColumnGrid,
+  MainColumn,
+  SideColumn,
+  CardBase,
+  StickyCard,
+  TextLink,
+} from '@/lib/styles';
 
 export default function OrderPage() {
   const params = useParams();
@@ -68,91 +78,96 @@ export default function OrderPage() {
   const isSeller = userInfo?._id === order.seller;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        Ordine <span className="text-gray-500 text-lg">#{order._id}</span>
-      </h1>
+    <Container style={{ padding: '2rem 1rem' }}>
+      <PageTitle style={{ marginBottom: '1.5rem' }}>
+        Ordine <span style={{ color: '#6b7280', fontSize: '1.125rem' }}>#{order._id}</span>
+      </PageTitle>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <TwoColumnGrid style={{ gridTemplateColumns: '1fr', gap: '2rem' }}>
         {/* Order Details */}
-        <div className="lg:col-span-2 space-y-6">
+        <MainColumn style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* Shipping */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Spedizione</h2>
-            <div className="text-gray-600 space-y-1 mb-4">
-              <p><span className="font-medium">Nome:</span> {order.shippingAddress.fullName}</p>
-              <p><span className="font-medium">Indirizzo:</span> {order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.postalCode}</p>
+          <CardBase>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#111827', marginBottom: '1rem' }}>Spedizione</h2>
+            <div style={{ color: '#6b7280', display: 'flex', flexDirection: 'column', gap: '0.25rem', marginBottom: '1rem' }}>
+              <p><span style={{ fontWeight: '500' }}>Nome:</span> {order.shippingAddress.fullName}</p>
+              <p><span style={{ fontWeight: '500' }}>Indirizzo:</span> {order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.postalCode}</p>
             </div>
             {order.isDelivered ? (
               <MessageBox variant="success">Consegnato il {new Date(order.deliveredAt!).toLocaleDateString('it-IT')}</MessageBox>
             ) : (
               <MessageBox variant="warning">Non ancora consegnato</MessageBox>
             )}
-          </div>
+          </CardBase>
 
           {/* Payment */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Pagamento</h2>
-            <p className="text-gray-600 mb-4">
-              <span className="font-medium">Metodo:</span> Da concordare tra le parti
+          <CardBase>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#111827', marginBottom: '1rem' }}>Pagamento</h2>
+            <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
+              <span style={{ fontWeight: '500' }}>Metodo:</span> Da concordare tra le parti
             </p>
             {order.isPaid ? (
               <MessageBox variant="success">Pagato il {new Date(order.paidAt!).toLocaleDateString('it-IT')}</MessageBox>
             ) : (
               <MessageBox variant="warning">Non ancora pagato</MessageBox>
             )}
-          </div>
+          </CardBase>
 
           {/* Order Items */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Articoli</h2>
-            <ul className="divide-y divide-gray-100">
+          <CardBase>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#111827', marginBottom: '1rem' }}>Articoli</h2>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', borderTop: '1px solid #f3f4f6' }}>
               {order.orderItems.map((item) => (
-                <li key={item.product} className="py-4 flex items-center gap-4">
-                  <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                <li key={item.product} style={{ padding: '1rem 0', display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: '1px solid #f3f4f6' }}>
+                  <div style={{ position: 'relative', width: '4rem', height: '4rem', borderRadius: '0.5rem', overflow: 'hidden', backgroundColor: '#f3f4f6', flexShrink: 0 }}>
                     <Image
                       src={item.image || '/img-not-found.png'}
                       alt={item.name}
                       fill
-                      className="object-cover"
+                      style={{ objectFit: 'cover' }}
                     />
                   </div>
-                  <div className="flex-1">
-                    <Link href={`/product/${item.product}`} className="text-gray-900 font-medium hover:text-blue-600">
+                  <div style={{ flex: 1 }}>
+                    <Link
+                      href={`/product/${item.product}`}
+                      style={{ color: '#111827', fontWeight: '500', textDecoration: 'none' }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = '#2563eb'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = '#111827'}
+                    >
                       {item.name}
                     </Link>
                   </div>
-                  <div className="text-right text-sm">
-                    <p>{item.qty} x ☯{item.priceVal} = ☯{item.qty * item.priceVal}</p>
-                    <p className="text-gray-500">{item.qty} x €{item.price} = €{(item.qty * item.price).toFixed(2)}</p>
+                  <div style={{ textAlign: 'right', fontSize: '0.875rem' }}>
+                    <p style={{ margin: 0 }}>{item.qty} x ☯{item.priceVal} = ☯{item.qty * item.priceVal}</p>
+                    <p style={{ color: '#6b7280', margin: 0 }}>{item.qty} x €{item.price} = €{(item.qty * item.price).toFixed(2)}</p>
                   </div>
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
+          </CardBase>
+        </MainColumn>
 
         {/* Summary */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 sticky top-4">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Riepilogo</h2>
+        <SideColumn>
+          <StickyCard style={{ boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#111827', marginBottom: '1.5rem' }}>Riepilogo</h2>
 
-            <div className="space-y-4 mb-6">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Articoli</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#6b7280' }}>Articoli</span>
                 <span>☯ {order.orderItems.reduce((a, c) => a + c.priceVal * c.qty, 0)}</span>
               </div>
-              <div className="flex justify-between text-gray-600">
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6b7280' }}>
                 <span>Spedizione</span>
                 <span>Da concordare</span>
               </div>
-              <div className="border-t pt-4 flex justify-between font-semibold text-lg">
+              <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', fontWeight: '600', fontSize: '1.125rem' }}>
                 <span>Totale</span>
                 <span>☯ {order.orderItems.reduce((a, c) => a + c.priceVal * c.qty, 0)}</span>
               </div>
             </div>
 
-            <div className="bg-blue-50 rounded-lg p-4 mb-6 text-sm text-gray-600">
+            <div style={{ backgroundColor: '#eff6ff', borderRadius: '0.5rem', padding: '1rem', marginBottom: '1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
               L&apos;offerente ha ricevuto una email con i tuoi dati di contatto.
               Controlla la tua email per concordare pagamento e consegna.
             </div>
@@ -162,7 +177,21 @@ export default function OrderPage() {
               <button
                 onClick={markAsPaid}
                 disabled={actionLoading}
-                className="w-full mb-3 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+                style={{
+                  width: '100%',
+                  marginBottom: '0.75rem',
+                  padding: '0.75rem',
+                  backgroundColor: '#16a34a',
+                  color: 'white',
+                  fontWeight: '600',
+                  borderRadius: '0.5rem',
+                  border: 'none',
+                  cursor: actionLoading ? 'not-allowed' : 'pointer',
+                  opacity: actionLoading ? 0.5 : 1,
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => !actionLoading && (e.currentTarget.style.backgroundColor = '#15803d')}
+                onMouseLeave={(e) => !actionLoading && (e.currentTarget.style.backgroundColor = '#16a34a')}
               >
                 Segna come Pagato
               </button>
@@ -173,7 +202,21 @@ export default function OrderPage() {
               <button
                 onClick={markAsDelivered}
                 disabled={actionLoading}
-                className="w-full mb-3 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+                style={{
+                  width: '100%',
+                  marginBottom: '0.75rem',
+                  padding: '0.75rem',
+                  backgroundColor: '#16a34a',
+                  color: 'white',
+                  fontWeight: '600',
+                  borderRadius: '0.5rem',
+                  border: 'none',
+                  cursor: actionLoading ? 'not-allowed' : 'pointer',
+                  opacity: actionLoading ? 0.5 : 1,
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => !actionLoading && (e.currentTarget.style.backgroundColor = '#15803d')}
+                onMouseLeave={(e) => !actionLoading && (e.currentTarget.style.backgroundColor = '#16a34a')}
               >
                 Segna come Consegnato
               </button>
@@ -181,15 +224,27 @@ export default function OrderPage() {
 
             <Link
               href="/"
-              className="block text-center py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+              style={{
+                display: 'block',
+                textAlign: 'center',
+                padding: '0.75rem',
+                border: '1px solid #d1d5db',
+                color: '#374151',
+                fontWeight: '500',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               Torna alla Vetrina
             </Link>
 
             {actionLoading && <LoadingBox />}
-          </div>
-        </div>
-      </div>
-    </div>
+          </StickyCard>
+        </SideColumn>
+      </TwoColumnGrid>
+    </Container>
   );
 }
