@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Header, Footer } from "@/components/layout";
+import { LayoutWrapper } from "@/components/layout";
+import { StyledComponentsRegistry, ThemeProvider } from "@/lib/styles";
 
 export const metadata: Metadata = {
   title: "Pagine Azzurre - Marketplace Italiano",
@@ -14,14 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it">
-      <body className="antialiased font-sans">
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="flex-grow container mx-auto px-4 py-8">
-            {children}
-          </main>
-          <Footer />
-        </div>
+      <body>
+        <StyledComponentsRegistry>
+          <ThemeProvider>
+            <LayoutWrapper>{children}</LayoutWrapper>
+          </ThemeProvider>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );

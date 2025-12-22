@@ -1,5 +1,6 @@
-export { default as Header } from './Header';
-export { default as Footer } from './Footer';
-export { default as PreHeader } from './PreHeader';
-export { default as PostHeader } from './PostHeader';
-export { default as SearchBox } from './SearchBox';
+export { Header } from './Header';
+export { Footer } from './Footer';
+export { PreHeader } from './PreHeader';
+export { PostHeader } from './PostHeader';
+export { SearchBox } from './SearchBox';
+export { LayoutWrapper } from './LayoutWrapper';

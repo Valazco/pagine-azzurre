@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import WelcomeBanner from './WelcomeBanner';
+import { WelcomeBanner } from './WelcomeBanner';
 
 const meta: Meta<typeof WelcomeBanner> = {
   title: 'UI/WelcomeBanner',
@@ -9,7 +9,7 @@ const meta: Meta<typeof WelcomeBanner> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Banner di benvenuto con logo e messaggio di presentazione di Pagine Azzurre',
+        component: 'Banner di benvenuto con styled-components. Presenta Pagine Azzurre con logo e messaggio mission.',
       },
     },
     nextjs: {
@@ -18,7 +18,7 @@ const meta: Meta<typeof WelcomeBanner> = {
   },
   decorators: [
     (Story) => (
-      <div className="p-4 bg-gray-100 min-h-screen">
+      <div style={{ padding: '1rem', backgroundColor: '#f3f4f6', minHeight: '100vh' }}>
         <Story />
       </div>
     ),

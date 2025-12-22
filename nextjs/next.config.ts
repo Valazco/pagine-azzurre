@@ -26,6 +26,7 @@ const nextConfig: NextConfig = {
   // Compiler options
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
+    styledComponents: true,
   },
 
   // Performance optimizations
