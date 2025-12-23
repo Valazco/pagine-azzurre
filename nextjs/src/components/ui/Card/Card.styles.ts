@@ -44,10 +44,14 @@ const variantStyles = {
   `,
 };
 
-export const StyledCard = styled.div<StyledCardProps>`
+const baseCardStyles = css<StyledCardProps>`
   border-radius: ${theme.borderRadius.xl};
   transition: all ${theme.transitions.normal};
   overflow: hidden;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
 
   ${({ $variant }) => variantStyles[$variant]}
   ${({ $padding }) => paddingStyles[$padding]}
@@ -67,10 +71,28 @@ export const StyledCard = styled.div<StyledCardProps>`
     css`
       cursor: pointer;
 
+      &:hover {
+        box-shadow: ${theme.shadows.lg};
+      }
+
       &:active {
         transform: translateY(0);
       }
+
+      &:focus-visible {
+        outline: 2px solid ${theme.colors.primary};
+        outline-offset: 2px;
+      }
     `}
+`;
+
+export const StyledCard = styled.div<StyledCardProps>`
+  ${baseCardStyles}
+`;
+
+export const StyledCardButton = styled.button<StyledCardProps>`
+  ${baseCardStyles}
+  display: block;
 `;
 
 export const CardHeader = styled.div`

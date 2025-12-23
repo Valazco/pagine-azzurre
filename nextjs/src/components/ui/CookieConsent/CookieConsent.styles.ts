@@ -58,18 +58,44 @@ export const PrivacyLink = styled(Link)`
   }
 `;
 
-export const AcceptButton = styled.button`
-  background-color: white;
-  color: #374151;
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+`;
+
+const BaseButton = styled.button`
   padding: 0.5rem 1.5rem;
   border-radius: 0.5rem;
   font-weight: 500;
   border: none;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  min-height: 44px; /* Touch target accessibility */
+
+  &:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+`;
+
+export const AcceptButton = styled(BaseButton)`
+  background-color: #10b981;
+  color: white;
 
   &:hover {
-    background-color: #f3f4f6;
+    background-color: #059669;
+  }
+`;
+
+export const RejectButton = styled(BaseButton)`
+  background-color: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: white;
   }
 `;

@@ -21,12 +21,17 @@ export function MessageBox({
   fullWidth = false,
   ...props
 }: MessageBoxProps) {
+  // Use role="alert" for danger/warning to announce to screen readers immediately
+  const isAlertRole = variant === 'danger' || variant === 'warning';
+
   return (
     <MessageBoxWrapper $centered={centered}>
       <StyledMessageBox
         $variant={variant}
         $centered={centered}
         $fullWidth={fullWidth}
+        role={isAlertRole ? 'alert' : 'status'}
+        aria-live={isAlertRole ? 'assertive' : 'polite'}
         {...props}
       >
         {children}

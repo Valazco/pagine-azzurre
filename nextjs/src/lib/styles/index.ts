@@ -4,3 +4,13 @@ export { GlobalStyles } from './GlobalStyles';
 export { ThemeProvider } from './ThemeProvider';
 export { StyledComponentsRegistry } from './StyledComponentsRegistry';
 export * from './pages';
+
+// Accessibility mixins
+export {
+  focusVisibleMixin,
+  touchTargetMixin,
+  srOnlyMixin,
+  reducedMotionMixin,
+  interactiveElementMixin,
+  highContrastMixin,
+} from './mixins';

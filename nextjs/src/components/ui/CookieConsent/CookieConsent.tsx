@@ -7,16 +7,20 @@ import {
   CookieContent,
   CookieText,
   PrivacyLink,
+  ButtonGroup,
   AcceptButton,
+  RejectButton,
 } from './CookieConsent.styles';
+
+export type CookieConsentValue = 'accepted' | 'rejected' | null;
 
 export function CookieConsent() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Check if user has already accepted cookies
-    const hasAccepted = localStorage.getItem('pagineazzurre-cookies');
-    if (!hasAccepted) {
+    // Check if user has already made a choice
+    const cookieChoice = localStorage.getItem('pagineazzurre-cookies');
+    if (!cookieChoice) {
       setIsVisible(true);
     }
   }, []);
@@ -27,13 +31,24 @@ export function CookieConsent() {
     setIsVisible(false);
   };
 
+  const handleReject = () => {
+    localStorage.setItem('pagineazzurre-cookies', 'rejected');
+    localStorage.setItem('pagineazzurre-cookies-date', new Date().toISOString());
+    // Clear any existing non-essential cookies here if needed
+    setIsVisible(false);
+  };
+
   if (!isVisible) return null;
 
   return (
-    <CookieBanner>
+    <CookieBanner
+      role="dialog"
+      aria-label="Consenso Cookie"
+      aria-describedby="cookie-description"
+    >
       <CookieContainer>
         <CookieContent>
-          <CookieText>
+          <CookieText id="cookie-description">
             <p>
               I cookie ci aiutano ad erogare servizi di qualità.
             </p>
@@ -47,9 +62,14 @@ export function CookieConsent() {
               <PrivacyLink href="/privacy">Privacy</PrivacyLink>
             </p>
           </CookieText>
-          <AcceptButton onClick={handleAccept}>
-            Accetto
-          </AcceptButton>
+          <ButtonGroup>
+            <RejectButton onClick={handleReject}>
+              Rifiuto
+            </RejectButton>
+            <AcceptButton onClick={handleAccept}>
+              Accetto
+            </AcceptButton>
+          </ButtonGroup>
         </CookieContent>
       </CookieContainer>
     </CookieBanner>

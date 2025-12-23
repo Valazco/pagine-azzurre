@@ -123,6 +123,20 @@ export const theme = {
     popover: 1050,
     tooltip: 1060,
   },
+
+  // Accessibility tokens
+  a11y: {
+    // Minimum touch target size (44x44px per WCAG)
+    minTouchTarget: '44px',
+    // Focus ring styles
+    focusRingWidth: '2px',
+    focusRingOffset: '2px',
+    focusRingColor: '#2563eb',
+    // Reduced motion query
+    reducedMotion: '@media (prefers-reduced-motion: reduce)',
+    // High contrast query
+    highContrast: '@media (prefers-contrast: more)',
+  },
 } as const;
 
 // Type exports for TypeScript support

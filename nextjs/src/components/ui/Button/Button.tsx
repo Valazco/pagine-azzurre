@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { StyledButton, ButtonIcon, ButtonVariant, ButtonSize } from './Button.styles';
+import { StyledButton, ButtonIcon, ButtonVariant, ButtonSize, ScreenReaderOnly } from './Button.styles';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Visual style variant */
@@ -12,6 +12,8 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   fullWidth?: boolean;
   /** Show loading spinner */
   isLoading?: boolean;
+  /** Loading text for screen readers */
+  loadingText?: string;
   /** Icon to show before text */
   leftIcon?: React.ReactNode;
   /** Icon to show after text */
@@ -25,6 +27,7 @@ export function Button({
   size = 'md',
   fullWidth = false,
   isLoading = false,
+  loadingText = 'Caricamento in corso',
   leftIcon,
   rightIcon,
   children,
@@ -38,11 +41,14 @@ export function Button({
       $fullWidth={fullWidth}
       $isLoading={isLoading}
       disabled={disabled || isLoading}
+      aria-busy={isLoading}
+      aria-disabled={disabled || isLoading}
       {...props}
     >
       {leftIcon && <ButtonIcon>{leftIcon}</ButtonIcon>}
       {children}
       {rightIcon && <ButtonIcon>{rightIcon}</ButtonIcon>}
+      {isLoading && <ScreenReaderOnly>{loadingText}</ScreenReaderOnly>}
     </StyledButton>
   );
 }

@@ -3,6 +3,7 @@
 import React from 'react';
 import {
   StyledCard,
+  StyledCardButton,
   CardHeader,
   CardTitle,
   CardSubtitle,
@@ -24,6 +25,8 @@ export interface CardProps {
   clickable?: boolean;
   /** Click handler */
   onClick?: () => void;
+  /** Accessible label for clickable cards */
+  ariaLabel?: string;
   /** Card contents */
   children: React.ReactNode;
   /** Additional className */
@@ -38,20 +41,37 @@ export function Card({
   hoverable = false,
   clickable = false,
   onClick,
+  ariaLabel,
   children,
   className,
   style,
 }: CardProps) {
+  const isClickable = clickable || !!onClick;
+  const sharedProps = {
+    $variant: variant,
+    $padding: padding,
+    $hoverable: hoverable,
+    $clickable: isClickable,
+    className,
+    style,
+  };
+
+  // Use button element for clickable cards (better accessibility)
+  if (isClickable && onClick) {
+    return (
+      <StyledCardButton
+        {...sharedProps}
+        onClick={onClick}
+        type="button"
+        aria-label={ariaLabel}
+      >
+        {children}
+      </StyledCardButton>
+    );
+  }
+
   return (
-    <StyledCard
-      $variant={variant}
-      $padding={padding}
-      $hoverable={hoverable}
-      $clickable={clickable || !!onClick}
-      onClick={onClick}
-      className={className}
-      style={style}
-    >
+    <StyledCard {...sharedProps}>
       {children}
     </StyledCard>
   );
