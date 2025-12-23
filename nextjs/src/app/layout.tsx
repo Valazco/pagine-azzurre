@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { LayoutWrapper } from "@/components/layout";
 import { StyledComponentsRegistry, ThemeProvider } from "@/lib/styles";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 export const metadata: Metadata = {
   title: "Pagine Azzurre - Marketplace Italiano",
@@ -16,11 +17,13 @@ export default function RootLayout({
   return (
     <html lang="it">
       <body>
-        <StyledComponentsRegistry>
-          <ThemeProvider>
-            <LayoutWrapper>{children}</LayoutWrapper>
-          </ThemeProvider>
-        </StyledComponentsRegistry>
+        <AuthProvider>
+          <StyledComponentsRegistry>
+            <ThemeProvider>
+              <LayoutWrapper>{children}</LayoutWrapper>
+            </ThemeProvider>
+          </StyledComponentsRegistry>
+        </AuthProvider>
       </body>
     </html>
   );

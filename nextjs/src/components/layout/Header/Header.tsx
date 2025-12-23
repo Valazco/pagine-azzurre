@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 import { Menu, ShoppingCart, ChevronDown, User, LogOut, Package, Activity, History, LayoutDashboard, Users } from 'lucide-react';
 import { useCartStore } from '@/lib/store/cart';
-import { useUserStore } from '@/lib/store/user';
 import { Button } from '@/components/ui/Button';
 import SearchBox from '../SearchBox';
 import PreHeader from '../PreHeader';
@@ -43,12 +43,20 @@ interface HeaderProps {
 export function Header({ setSidebarIsOpen }: HeaderProps) {
   const router = useRouter();
   const { cartItems } = useCartStore();
-  const { userInfo, signout } = useUserStore();
+  const { data: session } = useSession();
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showAdminDropdown, setShowAdminDropdown] = useState(false);
 
+  // Map session to userInfo-like object for compatibility
+  const userInfo = session?.user ? {
+    username: session.user.name,
+    isAdmin: session.user.isAdmin,
+    isSeller: session.user.isSeller,
+    verified: true, // If they have a session, they're verified
+  } : null;
+
   const signoutHandler = () => {
-    signout();
+    signOut({ callbackUrl: '/' });
     setShowUserDropdown(false);
   };
 

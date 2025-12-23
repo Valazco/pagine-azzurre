@@ -2,9 +2,9 @@
 
 import { useState, useEffect, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { useUserStore } from '@/lib/store/user';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
 import { FormGroup, Label, Input, PrimaryButton } from '@/lib/styles';
@@ -78,29 +78,37 @@ const StyledLink = styled(Link)`
 function SigninContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/';
-
-  const { userInfo, loading, error, signin, clearError } = useUserStore();
+  const callbackUrl = searchParams.get('callbackUrl') || searchParams.get('redirect') || '/';
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (userInfo) {
-      router.push(redirect);
+    if (status === 'authenticated' && session) {
+      router.push(callbackUrl);
     }
-  }, [userInfo, redirect, router]);
-
-  useEffect(() => {
-    clearError();
-  }, [clearError]);
+  }, [session, status, callbackUrl, router]);
 
   const submitHandler = async (e: FormEvent) => {
     e.preventDefault();
-    try {
-      await signin(email, password);
-    } catch {
-      // Error is handled by the store
+    setLoading(true);
+    setError('');
+
+    const result = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    });
+
+    setLoading(false);
+
+    if (result?.error) {
+      setError(result.error);
+    } else if (result?.ok) {
+      router.push(callbackUrl);
     }
   };
 
@@ -149,7 +157,7 @@ function SigninContent() {
           <LinksSection>
             <LinkText>
               Nuovo utente?{' '}
-              <StyledLink href={`/register?redirect=${redirect}`}>
+              <StyledLink href={`/register?redirect=${callbackUrl}`}>
                 Registrati
               </StyledLink>
             </LinkText>

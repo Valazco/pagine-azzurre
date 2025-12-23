@@ -34,7 +34,8 @@ export default function OrderListPage() {
     try {
       setLoading(true);
       const { data } = await apiClient.get('/orders');
-      setOrders(data);
+      // Handle both array response and { orders: [...] } response
+      setOrders(Array.isArray(data) ? data : data.orders || []);
     } catch {
       setError('Errore nel caricamento degli ordini');
     } finally {
