@@ -9,22 +9,27 @@ interface RatingProps {
 }
 
 export function Rating({ rating, numReviews, caption }: RatingProps) {
-  const renderStar = (position: number) => {
+  const getStarType = (position: number): 'full' | 'half' | 'empty' => {
     if (rating >= position) {
-      return '★'; // Full star
+      return 'full';
     } else if (rating >= position - 0.5) {
-      return '⯨'; // Half star
+      return 'half';
     } else {
-      return '☆'; // Empty star
+      return 'empty';
     }
   };
 
   return (
     <RatingContainer>
-      <StarsContainer>
-        {[1, 2, 3, 4, 5].map((position) => (
-          <Star key={position}>{renderStar(position)}</Star>
-        ))}
+      <StarsContainer aria-label={`Valutazione: ${rating} su 5 stelle`}>
+        {[1, 2, 3, 4, 5].map((position) => {
+          const type = getStarType(position);
+          return (
+            <Star key={position} $type={type} aria-hidden="true">
+              {type === 'half' ? '☆' : type === 'full' ? '★' : '☆'}
+            </Star>
+          );
+        })}
       </StarsContainer>
       {caption ? (
         <Caption>{caption}</Caption>
