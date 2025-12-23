@@ -1,10 +1,14 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import styled from 'styled-components';
 import { theme } from '@/lib/styles';
 import { Header } from './Header';
 import { Footer } from './Footer';
+
+// Routes that should not show header/footer
+const MINIMAL_LAYOUT_ROUTES = ['/register', '/signin', '/verification', '/password-recovery'];
 
 const AppContainer = styled.div`
   display: flex;
@@ -25,11 +29,22 @@ const MainContent = styled.main`
   }
 `;
 
+const MinimalContainer = styled.div`
+  min-height: 100vh;
+`;
+
 interface LayoutWrapperProps {
   children: ReactNode;
 }
 
 export function LayoutWrapper({ children }: LayoutWrapperProps) {
+  const pathname = usePathname();
+  const isMinimalLayout = MINIMAL_LAYOUT_ROUTES.some(route => pathname?.startsWith(route));
+
+  if (isMinimalLayout) {
+    return <MinimalContainer>{children}</MinimalContainer>;
+  }
+
   return (
     <AppContainer>
       <Header />

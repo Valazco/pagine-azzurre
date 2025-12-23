@@ -9,6 +9,7 @@ interface UserStore {
   error: string | null;
 
   // Actions
+  setUserInfo: (info: LoginResponse) => void;
   signin: (email: string, password: string) => Promise<void>;
   register: (data: any) => Promise<void>;
   signout: () => void;
@@ -21,6 +22,8 @@ export const useUserStore = create<UserStore>()(
       userInfo: null,
       loading: false,
       error: null,
+
+      setUserInfo: (info) => set({ userInfo: info }),
 
       signin: async (email, password) => {
         try {

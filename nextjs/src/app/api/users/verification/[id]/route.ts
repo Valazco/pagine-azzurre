@@ -27,25 +27,37 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     await connectDB();
 
-    const user = await UserModel.findOne({ 'verify.trusted_link': verificationId });
+    // Use atomic findOneAndUpdate to prevent race conditions
+    // Only update if verified is false, preventing duplicate verifications
+    const user = await UserModel.findOneAndUpdate(
+      {
+        'verify.trusted_link': verificationId,
+        'verify.verified': false, // Only match if not already verified
+      },
+      {
+        $set: { 'verify.verified': true },
+      },
+      {
+        new: true, // Return the updated document
+      }
+    );
 
     if (!user) {
+      // Check if user exists but is already verified
+      const existingUser = await UserModel.findOne({ 'verify.trusted_link': verificationId });
+
+      if (existingUser?.verify?.verified) {
+        return NextResponse.json(
+          { message: 'Il processo di verifica può essere eseguito solo una volta.' },
+          { status: 400 }
+        );
+      }
+
       return NextResponse.json(
         { message: 'Link di verifica non valido' },
         { status: 404 }
       );
     }
-
-    if (user.verify.verified) {
-      return NextResponse.json(
-        { message: 'Il processo di verifica può essere eseguito solo una volta.' },
-        { status: 400 }
-      );
-    }
-
-    // Mark user as verified
-    user.verify.verified = true;
-    await user.save();
 
     // Check newsletter status
     const newsletter = await NewsletterModel.findOne({ email: user.email });
