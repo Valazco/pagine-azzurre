@@ -138,51 +138,36 @@ export function Header({ setSidebarIsOpen }: HeaderProps) {
                             onClick={() => setShowUserDropdown(false)}
                           >
                             <User size={16} />
-                            Personale
+                            Profilo
                           </DropdownLink>
                         </DropdownItem>
-
-                        {userInfo.verified && userInfo.isSeller && (
-                          <>
-                            <DropdownItem $hasBorder>
-                              <DropdownLink
-                                href="/productlist/seller"
-                                onClick={() => setShowUserDropdown(false)}
-                              >
-                                <Package size={16} />
-                                Crea Annuncio
-                              </DropdownLink>
-                            </DropdownItem>
-                            <DropdownItem>
-                              <DropdownLink
-                                href="/productlist/seller"
-                                onClick={() => setShowUserDropdown(false)}
-                              >
-                                <Package size={16} />
-                                Modifica Annuncio
-                              </DropdownLink>
-                            </DropdownItem>
-                            <DropdownItem>
-                              <DropdownLink
-                                href="/orderlist/seller"
-                                onClick={() => setShowUserDropdown(false)}
-                              >
-                                <Activity size={16} />
-                                Attività
-                              </DropdownLink>
-                            </DropdownItem>
-                            <DropdownItem>
-                              <DropdownLink
-                                href="/orderhistory"
-                                onClick={() => setShowUserDropdown(false)}
-                              >
-                                <History size={16} />
-                                Storico
-                              </DropdownLink>
-                            </DropdownItem>
-                          </>
-                        )}
-
+                        <DropdownItem>
+                          <DropdownLink
+                            href="/productlist/seller"
+                            onClick={() => setShowUserDropdown(false)}
+                          >
+                            <Package size={16} />
+                            Annunci
+                          </DropdownLink>
+                        </DropdownItem>
+                        <DropdownItem>
+                          <DropdownLink
+                            href="/orderlist/seller"
+                            onClick={() => setShowUserDropdown(false)}
+                          >
+                            <Activity size={16} />
+                            Attività
+                          </DropdownLink>
+                        </DropdownItem>
+                        <DropdownItem>
+                          <DropdownLink
+                            href="/orderhistory"
+                            onClick={() => setShowUserDropdown(false)}
+                          >
+                            <History size={16} />
+                            Storico
+                          </DropdownLink>
+                        </DropdownItem>
                         <DropdownItem $hasBorder>
                           <DropdownLogoutButton onClick={signoutHandler}>
                             <LogOut size={16} />
