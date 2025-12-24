@@ -28,8 +28,10 @@
     "next-auth": "^4.24.10",
     "nodemailer": "^7.0.12",
     "react": "19.2.0",
+    "react-day-picker": "^9.13.0",
     "react-dom": "19.2.0",
     "react-qr-code": "^2.0.18",
+    "react-select": "^5.10.2",
     "styled-components": "^6.1.19",
     "uuid": "^11.0.3",
     "zustand": "^5.0.8"

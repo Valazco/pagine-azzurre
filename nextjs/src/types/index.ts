@@ -2,6 +2,7 @@
 export interface User {
   _id: string;
   account: string;
+  accountKey?: string;
   username: string;
   name?: string;
   surname?: string;
@@ -17,6 +18,7 @@ export interface User {
   isAdmin: boolean;
   isSeller: boolean;
   hasAd: boolean;
+  verified?: boolean;
   verify?: {
     verified: boolean;
     trusted_link?: string;

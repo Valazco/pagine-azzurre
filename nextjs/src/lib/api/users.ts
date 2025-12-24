@@ -46,3 +46,26 @@ export async function requestPasswordRecovery(email: string): Promise<void> {
 export async function changePassword(recoveryId: string, newPassword: string): Promise<void> {
   await apiClient.post(`/users/password-recovery/${recoveryId}`, { password: newPassword });
 }
+
+// Get user details (full profile)
+export async function getUserDetails(userId: string): Promise<User> {
+  const response = await apiClient.get(`/users/${userId}`);
+  return response.data;
+}
+
+// Update newsletter subscription
+export async function updateNewsletter(username: string, email: string): Promise<void> {
+  await apiClient.post('/users/newsletter', { username, email });
+}
+
+// Upload seller logo to S3
+export async function uploadSellerLogo(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append('image', file);
+  const response = await apiClient.post('/uploads/s3', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+}

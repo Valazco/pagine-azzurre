@@ -2,6 +2,7 @@
 
 import { useState, useEffect, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { useUserStore } from '@/lib/store/user';
@@ -187,16 +188,18 @@ function RegisterContent() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/verification';
+  const redirect = searchParams.get('redirect') || '/';
+  const { data: session, status } = useSession();
 
-  const { userInfo, loading, error, register, clearError } = useUserStore();
+  const { loading, error, register, clearError } = useUserStore();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (userInfo) {
+    // Redirect if already authenticated via next-auth
+    if (status === 'authenticated' && session) {
       router.push(redirect);
     }
-  }, [userInfo, redirect, router]);
+  }, [session, status, redirect, router]);
 
   useEffect(() => {
     clearError();
@@ -244,6 +247,8 @@ function RegisterContent() {
         referer,
         newsletter,
       });
+      // Registration successful - redirect to verification page
+      router.push('/verification');
     } catch {
       // Error is handled by the store
     }
