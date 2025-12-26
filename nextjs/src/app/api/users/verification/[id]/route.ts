@@ -12,8 +12,15 @@ interface RouteParams {
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const body = await request.json();
-    const { uuid } = body;
+
+    // Handle empty or missing body gracefully
+    let uuid: string | undefined;
+    try {
+      const body = await request.json();
+      uuid = body.uuid;
+    } catch {
+      // Body is empty or invalid JSON - use id from params
+    }
 
     // Use uuid from body or id from params
     const verificationId = uuid || id;
