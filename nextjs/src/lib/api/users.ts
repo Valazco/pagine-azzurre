@@ -70,3 +70,9 @@ export async function uploadSellerLogo(file: File): Promise<string> {
   });
   return response.data;
 }
+
+// Get user's private key (accountKey)
+export async function getPrivateKey(): Promise<{ accountKey: string }> {
+  const response = await apiClient.get('/users/private-key');
+  return response.data;
+}

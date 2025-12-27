@@ -3,6 +3,7 @@ import "./globals.css";
 import { LayoutWrapper } from "@/components/layout";
 import { StyledComponentsRegistry, ThemeProvider } from "@/lib/styles";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { Web3Provider } from "@/components/providers/Web3Provider";
 
 export const metadata: Metadata = {
   title: "Pagine Azzurre - Marketplace Italiano",
@@ -18,11 +19,13 @@ export default function RootLayout({
     <html lang="it">
       <body>
         <AuthProvider>
-          <StyledComponentsRegistry>
-            <ThemeProvider>
-              <LayoutWrapper>{children}</LayoutWrapper>
-            </ThemeProvider>
-          </StyledComponentsRegistry>
+          <Web3Provider>
+            <StyledComponentsRegistry>
+              <ThemeProvider>
+                <LayoutWrapper>{children}</LayoutWrapper>
+              </ThemeProvider>
+            </StyledComponentsRegistry>
+          </Web3Provider>
         </AuthProvider>
       </body>
     </html>

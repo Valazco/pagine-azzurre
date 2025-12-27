@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { keccak256, toUtf8Bytes } from 'ethers';
+import { keccak256, toBytes } from 'viem';
 import connectDB from '@/lib/db/mongoose';
 import UserModel from '@/lib/db/models/User';
 import { sendPasswordRecoveryEmail } from '@/lib/services/email';
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate recovery ID using keccak256 hash of password
-    const recoveryId = keccak256(toUtf8Bytes(user.password));
+    const recoveryId = keccak256(toBytes(user.password));
     user.recoveryPasswordId = recoveryId;
     await user.save();
 

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-import { Wallet } from 'ethers';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import connectDB from '@/lib/db/mongoose';
 import UserModel from '@/lib/db/models/User';
 import NewsletterModel from '@/lib/db/models/Newsletter';
@@ -95,14 +95,15 @@ export async function POST(request: NextRequest) {
 
     // Hash password and create wallet
     const hashedPassword = bcrypt.hashSync(password, 8);
-    // In ethers v6, Wallet.createRandom() uses secure random by default
-    const wallet = Wallet.createRandom();
+    // Generate wallet using viem
+    const privateKey = generatePrivateKey();
+    const walletAccount = privateKeyToAccount(privateKey);
     const trustedLink = uuidv4();
 
     // Create user
     const user = new UserModel({
-      account: wallet.address,
-      accountKey: wallet.privateKey,
+      account: walletAccount.address,
+      accountKey: privateKey,
       username: username.toUpperCase(),
       email: email.toLowerCase(),
       password: hashedPassword,

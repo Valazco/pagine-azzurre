@@ -10,8 +10,9 @@ import { format, parse, isValid } from 'date-fns';
 import { it } from 'date-fns/locale';
 import QRCode from 'react-qr-code';
 import 'react-day-picker/style.css';
-import { getUserDetails, updateUserProfile, updateNewsletter, uploadSellerLogo } from '@/lib/api/users';
+import { getUserDetails, updateUserProfile, updateNewsletter, uploadSellerLogo, getPrivateKey } from '@/lib/api/users';
 import { getValazcoBalance } from '@/lib/web3/contract';
+import { ConnectWallet } from '@/components/web3/ConnectWallet';
 import citiesOptions, { CityOption } from '@/lib/resources/citiesOptions';
 import LoadingBox from '@/components/ui/LoadingBox';
 import MessageBox from '@/components/ui/MessageBox';
@@ -304,6 +305,7 @@ export default function ProfilePage() {
   const [balance, setBalance] = useState(0);
   const [passphrase, setPassphrase] = useState('');
   const [hideField, setHideField] = useState(true);
+  const [loadingPassphrase, setLoadingPassphrase] = useState(false);
 
   // Date picker state
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -347,7 +349,6 @@ export default function ProfilePage() {
         setEmail(userData.email || '');
         setReferer(userData.referer || []);
         setNewsletter(userData.newsletter || '');
-        setPassphrase(userData.accountKey || '');
 
         if (userData.partitaIva && !userData.partitaIva.match(/GMT/)) {
           setPartitaIva(userData.partitaIva);
@@ -424,6 +425,25 @@ export default function ProfilePage() {
     if (newReferer && referer.length < 5) {
       setReferer([...referer, newReferer]);
       setNewReferer('');
+    }
+  };
+
+  const handleRevealPassphrase = async () => {
+    if (passphrase) {
+      setHideField(false);
+      return;
+    }
+
+    setLoadingPassphrase(true);
+    try {
+      const { accountKey } = await getPrivateKey();
+      setPassphrase(accountKey);
+      setHideField(false);
+    } catch (err) {
+      console.error('Error fetching private key:', err);
+      alert('Errore nel recupero della chiave privata');
+    } finally {
+      setLoadingPassphrase(false);
     }
   };
 
@@ -555,10 +575,15 @@ export default function ProfilePage() {
 
                 <SectionTitle>Integration with Metamask:</SectionTitle>
                 <FormGroup>
-                  <Label>Secret</Label>
+                  <Label>Connetti Wallet</Label>
+                  <ConnectWallet />
+                </FormGroup>
+
+                <FormGroup>
+                  <Label>Secret (Private Key)</Label>
                   {hideField ? (
-                    <RevealButton type="button" onClick={() => setHideField(false)}>
-                      Reveal
+                    <RevealButton type="button" onClick={handleRevealPassphrase} disabled={loadingPassphrase}>
+                      {loadingPassphrase ? 'Caricamento...' : 'Reveal'}
                     </RevealButton>
                   ) : (
                     <Input
