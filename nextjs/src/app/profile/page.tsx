@@ -118,6 +118,7 @@ const QRCodeContainer = styled.div`
   background: white;
   border-radius: 0.5rem;
   width: fit-content;
+  margin: 0 auto;
 `;
 
 const RevealButton = styled.button`
@@ -226,6 +227,44 @@ const DatePickerPopover = styled.div`
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-top: 0.25rem;
+`;
+
+const SwitchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const SwitchLabel = styled.span`
+  font-size: 0.875rem;
+  color: #374151;
+`;
+
+const Switch = styled.button<{ $active: boolean }>`
+  position: relative;
+  width: 3.5rem;
+  height: 2rem;
+  background-color: ${({ $active }) => ($active ? '#003366' : '#d1d5db')};
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0.25rem;
+    left: ${({ $active }) => ($active ? '1.75rem' : '0.25rem')};
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: white;
+    border-radius: 50%;
+    transition: left 0.2s ease;
+  }
+
+  &:hover {
+    background-color: ${({ $active }) => ($active ? '#002244' : '#9ca3af')};
+  }
 `;
 
 export default function ProfilePage() {
@@ -430,7 +469,9 @@ export default function ProfilePage() {
       } as Partial<User>);
 
       if (newsletterUpdate) {
-        await updateNewsletter(username, email);
+        const result = await updateNewsletter(username, email);
+        setNewsletter(result.subscribed ? 'Verified' : 'Not Verified');
+        setNewsletterUpdate(false);
       }
 
       setSuccessUpdate(true);
@@ -728,25 +769,21 @@ export default function ProfilePage() {
 
                 {/* Newsletter Section */}
                 <SectionTitle>Iscrizione Newsletter:</SectionTitle>
-                {newsletter === 'Verified' ? (
-                  <MessageBox variant="success">Iscritto</MessageBox>
-                ) : (
-                  <MessageBox variant="info">Non iscritto</MessageBox>
-                )}
-
                 <FormGroup>
-                  <RadioGroup>
-                    <RadioLabel>
-                      <input
-                        type="radio"
-                        name="newsletter"
-                        onClick={() => setNewsletterUpdate(true)}
-                      />
-                      {newsletter === 'Not Verified'
-                        ? "Vuoi iscriverti alla nostra newsletter"
-                        : "Vuoi annullare l'iscrizione alla nostra newsletter"}
-                    </RadioLabel>
-                  </RadioGroup>
+                  <SwitchContainer>
+                    <SwitchLabel>
+                      {newsletter === 'Verified' ? 'Iscritto' : 'Non iscritto'}
+                    </SwitchLabel>
+                    <Switch
+                      type="button"
+                      $active={newsletter === 'Verified'}
+                      onClick={() => {
+                        setNewsletter(newsletter === 'Verified' ? 'Not Verified' : 'Verified');
+                        setNewsletterUpdate(true);
+                      }}
+                      aria-label="Toggle newsletter subscription"
+                    />
+                  </SwitchContainer>
                 </FormGroup>
 
                 {/* Seller Section */}

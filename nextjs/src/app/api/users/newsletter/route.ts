@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db/mongoose';
 import NewsletterModel from '@/lib/db/models/Newsletter';
-import { sendNewsletterWelcomeEmail } from '@/lib/services/email';
 
-// POST /api/users/newsletter - Subscribe to newsletter
-export async function POST(request: NextRequest) {
+// PATCH /api/users/newsletter - Toggle newsletter subscription
+export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, name } = body;
+    const { email, username } = body;
 
     if (!email) {
       return NextResponse.json(
@@ -30,46 +29,31 @@ export async function POST(request: NextRequest) {
     const existingSubscriber = await NewsletterModel.findOne({ email: email.toLowerCase() });
 
     if (existingSubscriber) {
-      if (existingSubscriber.verified) {
-        return NextResponse.json(
-          { message: 'Email già iscritta' },
-          { status: 400 }
-        );
-      } else {
-        return NextResponse.json(
-          { message: 'Email già iscritta ma non verificata' },
-          { status: 400 }
-        );
-      }
+      // Toggle verified status
+      existingSubscriber.verified = !existingSubscriber.verified;
+      await existingSubscriber.save();
+
+      return NextResponse.json({
+        subscribed: existingSubscriber.verified,
+      });
     }
 
-    // Create new subscriber
+    // Create new subscriber if doesn't exist
     const subscriber = new NewsletterModel({
-      name: name || undefined,
+      name: username || undefined,
       email: email.toLowerCase(),
-      verified: false,
+      verified: true,
     });
 
     await subscriber.save();
 
-    // Send welcome email
-    try {
-      await sendNewsletterWelcomeEmail(email, name);
-    } catch (emailError) {
-      console.error('Error sending newsletter welcome email:', emailError);
-      return NextResponse.json(
-        { message: 'Errore nell\'invio email' },
-        { status: 500 }
-      );
-    }
-
     return NextResponse.json({
-      subscriber: true,
+      subscribed: true,
     });
   } catch (error) {
-    console.error('Error subscribing to newsletter:', error);
+    console.error('Error updating newsletter subscription:', error);
     return NextResponse.json(
-      { message: 'Errore nell\'iscrizione alla newsletter' },
+      { message: 'Errore nell\'aggiornamento della newsletter' },
       { status: 500 }
     );
   }

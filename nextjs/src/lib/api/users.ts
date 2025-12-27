@@ -53,9 +53,10 @@ export async function getUserDetails(userId: string): Promise<User> {
   return response.data;
 }
 
-// Update newsletter subscription
-export async function updateNewsletter(username: string, email: string): Promise<void> {
-  await apiClient.post('/users/newsletter', { username, email });
+// Toggle newsletter subscription
+export async function updateNewsletter(username: string, email: string): Promise<{ subscribed: boolean }> {
+  const response = await apiClient.patch('/users/newsletter', { username, email });
+  return response.data;
 }
 
 // Upload seller logo to S3
