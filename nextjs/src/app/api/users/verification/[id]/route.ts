@@ -3,6 +3,7 @@ import connectDB from '@/lib/db/mongoose';
 import UserModel from '@/lib/db/models/User';
 import NewsletterModel from '@/lib/db/models/Newsletter';
 import { sendWelcomeEmail } from '@/lib/services/email';
+import { mintTokens } from '@/lib/services/blockchain';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -70,6 +71,21 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const newsletter = await NewsletterModel.findOne({ email: user.email });
     const isNewsletterSubscribed = newsletter?.verified || false;
 
+    // Mint 100 Valazco tokens as verification reward
+    let mintResult = { success: false, txHash: undefined as string | undefined };
+    if (user.account) {
+      try {
+        mintResult = await mintTokens(user.account as `0x${string}`);
+        if (mintResult.success) {
+          console.log(`Minted 100 VLZ to ${user.account}, tx: ${mintResult.txHash}`);
+        } else {
+          console.error('Failed to mint tokens:', mintResult.error);
+        }
+      } catch (mintError) {
+        console.error('Error minting verification reward:', mintError);
+      }
+    }
+
     // Send welcome email
     try {
       await sendWelcomeEmail(user.email, user.username, isNewsletterSubscribed);
@@ -81,6 +97,8 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({
       uuid: verificationId,
       user: user.toJSON(),
+      tokensMinted: mintResult.success,
+      txHash: mintResult.txHash,
     });
   } catch (error) {
     console.error('Error in verification:', error);

@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import connectDB from '@/lib/db/mongoose';
 import OrderModel from '@/lib/db/models/Order';
+import UserModel from '@/lib/db/models/User';
 import { authOptions } from '@/lib/auth/config';
+import { transferToEscrow } from '@/lib/services/blockchain';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
