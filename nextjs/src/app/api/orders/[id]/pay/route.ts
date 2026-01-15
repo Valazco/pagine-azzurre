@@ -32,24 +32,63 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       );
     }
 
+    // Check if already paid
+    if (order.isPaid) {
+      return NextResponse.json(
+        { message: 'Ordine già pagato' },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json().catch(() => ({}));
+    let escrowTxHash: string | undefined;
+
+    // Handle Valazco token payment - automatic transfer to escrow
+    if (order.paymentMethod === 'Valazco') {
+      // Get buyer's wallet info
+      const buyer = await UserModel.findById(order.user).select('+accountKey');
+
+      if (!buyer?.accountKey) {
+        return NextResponse.json(
+          { message: 'Wallet del compratore non configurato' },
+          { status: 400 }
+        );
+      }
+
+      // Convert price to token amount (totalPriceVal is in VLZ, token has 2 decimals)
+      const amount = BigInt(Math.round(order.totalPriceVal * 100));
+
+      // Transfer tokens from buyer to escrow
+      const result = await transferToEscrow(
+        buyer.accountKey as `0x${string}`,
+        amount
+      );
+
+      if (!result.success) {
+        console.error('Escrow transfer failed:', result.error);
+        return NextResponse.json(
+          { message: result.error || 'Errore nel trasferimento al escrow' },
+          { status: 400 }
+        );
+      }
+
+      escrowTxHash = result.txHash;
+      order.valPayment = 'completed';
+      console.log(`Transferred ${order.totalPriceVal} VLZ to escrow, tx: ${escrowTxHash}`);
+    }
+
     // Update payment status
     order.isPaid = true;
     order.paidAt = new Date();
 
-    // Optionally update payment result from body (for PayPal, etc.)
-    const body = await request.json().catch(() => ({}));
-    if (body.id || body.status) {
+    // Update payment result from body (for PayPal, etc.)
+    if (body.id || body.status || escrowTxHash) {
       order.paymentResult = {
-        id: body.id,
-        status: body.status,
-        update_time: body.update_time,
+        id: body.id || escrowTxHash,
+        status: body.status || 'completed',
+        update_time: body.update_time || new Date().toISOString(),
         email_address: body.email_address,
       };
-    }
-
-    // Update valPayment if txHash provided (blockchain payment)
-    if (body.txHash) {
-      order.valPayment = 'completed';
     }
 
     const updatedOrder = await order.save();
@@ -57,6 +96,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({
       message: 'Order Paid',
       order: updatedOrder,
+      escrowTxHash,
     });
   } catch (error) {
     console.error('Error updating order payment:', error);
