@@ -1,0 +1,39 @@
+# Besu Node Configuration for Pagine Azzurre
+# Free Gas Private Network
+
+# Data directory
+data-path="/data"
+
+# Genesis file
+genesis-file="/config/genesis.json"
+
+# Network configuration
+network-id=31337
+
+# Gas configuration - FREE GAS
+min-gas-price=0
+
+# JSON-RPC HTTP
+rpc-http-enabled=true
+rpc-http-api=["ETH", "NET", "WEB3", "ADMIN", "DEBUG", "TXPOOL"]
+rpc-http-host="0.0.0.0"
+rpc-http-port=8545
+rpc-http-cors-origins=["*"]
+
+# JSON-RPC WebSocket
+rpc-ws-enabled=true
+rpc-ws-api=["ETH", "NET", "WEB3"]
+rpc-ws-host="0.0.0.0"
+rpc-ws-port=8546
+
+# Host allowlist
+host-allowlist=["*"]
+
+# Logging
+logging="INFO"
+
+# P2P disabled for single node
+p2p-enabled=false
+
+# Sync mode
+sync-mode="FULL"

@@ -92,8 +92,10 @@ export default function ProductScreen(props) {
                     numReviews={product.numReviews}
                   ></Rating>
                 </li>
+                {/* dono */}
                 {product.section !== "avviso" &&
-                  product.section !== "propongo" && (
+                  product.section !== "propongo" && 
+                    product.section !== "dono" && (
                     <>
                       <li>Prezzo in Euro: € {product.priceEuro}</li>
                       <li>Prezzo in Val: ☯ {product.priceVal}</li>
@@ -127,8 +129,10 @@ export default function ProductScreen(props) {
                       numReviews={product.seller.seller.numReviews}
                     ></Rating>
                   </li>
+                  {/* dono */}
                   {product.section !== "avviso" &&
-                    product.section !== "propongo" && (
+                    product.section !== "propongo" &&
+                    product.section !== "dono" && (
                       <li>
                         <div className="row start">
                           <div style={{ paddingRight: "1.8rem" }}>Prezzo</div>

@@ -5,7 +5,9 @@ import { verifyNewsletter } from '../actions/userActions'
 export default function ThankYouScreen(props) {
 
   const userNewsletterVerify = useSelector((state) => state.userNewsletterVerify)
-  const { loading, name, message } = userNewsletterVerify
+  // variables never used but declared
+  //const { loading, name, message } = userNewsletterVerify
+  const { name } = userNewsletterVerify
   const email = props.location.pathname.split("/")[2]
   const dispatch = useDispatch()
 

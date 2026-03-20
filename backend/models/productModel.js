@@ -25,6 +25,7 @@ const productSchema = new mongoose.Schema(
     numReviews: { type: Number, required: true },
     section: { type: String, required: true, default: 'offro' },
     isService: { type: Boolean, required: true, default: false },
+    isGift: { type: Boolean, require: false, default: false },
     auxPhone: { type: String, required: false },
     delivery: { type: String, required: false, default: 'no preferences'},
     expiry: { type: Date, required: false, default: new Date().setFullYear(new Date().getFullYear() + 1)},

@@ -1,4 +1,6 @@
-import React, { useEffect, useState }  from 'react'
+//import React, { useEffect, useState }  from 'react'
+// useState is never used.
+import React, { useEffect }  from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom';
 import { userVerifyAccount, signout } from '../actions/userActions'
@@ -10,8 +12,11 @@ export default function VerifiedScreen(props) {
   const dispatch = useDispatch()
   const verifyAccount = useSelector((state) => state.userVerifyAccount)
   const { loading, uuid, error } = verifyAccount
-  const userRegister = useSelector((state) => state.userRegister);
-  const { userInfo } = userRegister;
+  
+  // userRegister is never used.
+  //const userRegister = useSelector((state) => state.userRegister);
+  // userInfo is never used.
+  //const { userInfo } = userRegister;
 
   useEffect(() => {
     window.scrollTo(0, 0)

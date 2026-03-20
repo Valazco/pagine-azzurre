@@ -16,12 +16,11 @@ import QRCode from "react-qr-code"
 
 import Web3 from 'web3'
 import SContract from '../web3Interface/abi.js'
-const web3 = new Web3('wss://goerli.infura.io/ws/v3/ea90d8f923e5484c84e7518e9f58f16b')
-const networkId = 5
-const deployedNetwork = SContract.networks[networkId]
-const _contract = new web3.eth.Contract(SContract.abi, deployedNetwork.address)
 
 export default function ProfileScreen() {
+  const [web3, setWeb3] = useState(null)
+  const [contract, setContract] = useState(null)
+  const [web3Config, setWeb3Config] = useState(null)
   const [account, setAccount] = useState('')
   const [name, setName] = useState('')
   const [surname, setSurname] = useState('')
@@ -65,9 +64,14 @@ export default function ProfileScreen() {
   }
 
   async function getSetBalance(account) {
-    let balance = await _contract.methods.balanceOf(account).call()
-    balance = parseFloat(balance) / 100
-    setBalance(balance)
+    if (!contract) return
+    try {
+      let balance = await contract.methods.balanceOf(account).call()
+      balance = parseFloat(balance) / 100
+      setBalance(balance)
+    } catch (error) {
+      console.error('Error getting balance:', error)
+    }
   }
 
   const handleChange = selectedOption => {
@@ -119,6 +123,39 @@ export default function ProfileScreen() {
 
   const dispatch = useDispatch()
 
+  // Fetch Web3 configuration from backend
+  useEffect(() => {
+    const fetchWeb3Config = async () => {
+      try {
+        const { data } = await Axios.get('/api/config/web3')
+        setWeb3Config(data)
+      } catch (error) {
+        console.error('Error fetching Web3 config:', error)
+      }
+    }
+    fetchWeb3Config()
+  }, [])
+
+  // Initialize Web3 and contract when config is loaded
+  useEffect(() => {
+    if (web3Config && web3Config.infuraUrl) {
+      try {
+        const web3Instance = new Web3(web3Config.infuraUrl)
+        const deployedNetwork = SContract.networks[web3Config.networkId]
+        if (deployedNetwork) {
+          const contractInstance = new web3Instance.eth.Contract(
+            SContract.abi,
+            deployedNetwork.address
+          )
+          setWeb3(web3Instance)
+          setContract(contractInstance)
+        }
+      } catch (error) {
+        console.error('Error initializing Web3:', error)
+      }
+    }
+  }, [web3Config])
+
   useEffect(() => {
     // TODO: For security reasons split db
     window.scrollTo(0, 0)
@@ -129,7 +166,6 @@ export default function ProfileScreen() {
       setName(user.name)
       setSurname(user.surname)
       setAccount(user.account)
-      getSetBalance(user.account)
       setUsername(user.username)
       setGender(user.gender)
       setBirthday(user.birthday)
@@ -151,6 +187,13 @@ export default function ProfileScreen() {
       }
     }
   }, [dispatch, userInfo._id, user, userInfo])
+
+  // Get balance when contract and account are ready
+  useEffect(() => {
+    if (contract && account) {
+      getSetBalance(account)
+    }
+  }, [contract, account])
 
   const submitHandler = (e) => {
     // dispatch update profile
