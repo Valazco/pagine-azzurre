@@ -23,6 +23,7 @@ import {
 } from './WelcomeBanner.styles';
 
 const logos = [
+  { src: '/logos/comunitasolidali.png', alt: 'Comunita Solidali', href: 'https://mercato.comunitasolidali.it' },
   { src: '/logos/magic_hands.jpg', alt: 'Magic Hands Logo' },
   { src: '/logos/bannerarancione.jpg', alt: 'Banner Arancione' },
   { src: '/logos/valazco-logo.png', alt: 'Valazco Logo' },
@@ -62,25 +63,41 @@ export function WelcomeBanner() {
 
         {/* Logos Container */}
         <LogosContainer>
-          {logos.map((logo, index) => (
-            <LogoWrapper key={index}>
-              <LogoBackground />
-              <Image
-                src={logo.src}
-                alt={logo.alt}
-                width={80}
-                height={80}
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  padding: '0.5rem',
-                  borderRadius: '0.75rem',
-                }}
-              />
-            </LogoWrapper>
-          ))}
+          {logos.map((logo, index) => {
+            const logoImage = (
+              <LogoWrapper>
+                <LogoBackground />
+                <Image
+                  src={logo.src}
+                  alt={logo.alt}
+                  width={80}
+                  height={80}
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    padding: '0.5rem',
+                    borderRadius: '0.75rem',
+                  }}
+                />
+              </LogoWrapper>
+            );
+
+            return logo.href ? (
+              <a
+                key={index}
+                href={logo.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none' }}
+              >
+                {logoImage}
+              </a>
+            ) : (
+              <div key={index}>{logoImage}</div>
+            );
+          })}
         </LogosContainer>
 
         {/* Footer Info */}

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050';
+const API_URL = '';
 
 // Create axios instance with default config
 export const apiClient = axios.create({

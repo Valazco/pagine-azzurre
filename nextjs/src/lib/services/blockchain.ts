@@ -1,7 +1,15 @@
-import { createWalletClient, createPublicClient, http, parseAbi } from 'viem';
+import { createWalletClient, createPublicClient, http, parseAbi, defineChain } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'http://localhost:8545';
+const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 31337);
+
+const customChain = defineChain({
+  id: CHAIN_ID,
+  name: 'Pagine Azzurre',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: { default: { http: [RPC_URL] } },
+});
 const CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS || '0x5FbDB2315678afecb367f032d93F642f64180aa3') as `0x${string}`;
 const ADMIN_PRIVATE_KEY = process.env.ADMIN_PRIVATE_KEY as `0x${string}`;
 const ADMIN_WALLET_ADDRESS = (process.env.ADMIN_WALLET_ADDRESS || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266') as `0x${string}`;
@@ -15,6 +23,9 @@ const VALAZCO_ABI = parseAbi([
 
 // Amount to mint on verification (100 tokens with 2 decimals = 10000)
 const VERIFICATION_REWARD = 10000n;
+
+// Amount of ETH to send for gas (0.01 ETH)
+const GAS_FUND_AMOUNT = 10000000000000000n; // 0.01 ETH in wei
 
 /**
  * Mint Valazco tokens to a user's wallet
@@ -35,6 +46,7 @@ export async function mintTokens(
 
     const walletClient = createWalletClient({
       account,
+      chain: customChain,
       transport: http(RPC_URL),
     });
 
@@ -50,6 +62,46 @@ export async function mintTokens(
     return { success: true, txHash: hash };
   } catch (error) {
     console.error('Error minting tokens:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+}
+
+/**
+ * Send ETH to a user's wallet for gas fees
+ * @param toAddress - The recipient's wallet address
+ * @param amount - Amount to send in wei (default: 0.01 ETH)
+ */
+export async function fundUserGas(
+  toAddress: `0x${string}`,
+  amount: bigint = GAS_FUND_AMOUNT
+): Promise<{ success: boolean; txHash?: string; error?: string }> {
+  if (!ADMIN_PRIVATE_KEY) {
+    console.error('ADMIN_PRIVATE_KEY not configured');
+    return { success: false, error: 'Admin wallet not configured' };
+  }
+
+  try {
+    const account = privateKeyToAccount(ADMIN_PRIVATE_KEY);
+
+    const walletClient = createWalletClient({
+      account,
+      chain: customChain,
+      transport: http(RPC_URL),
+    });
+
+    const hash = await walletClient.sendTransaction({
+      to: toAddress,
+      value: amount,
+    });
+
+    console.log(`Funded ${toAddress} with ${amount} wei for gas, tx: ${hash}`);
+
+    return { success: true, txHash: hash };
+  } catch (error) {
+    console.error('Error funding user gas:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'
@@ -95,6 +147,7 @@ export async function transferToEscrow(
 
     const walletClient = createWalletClient({
       account,
+      chain: customChain,
       transport: http(RPC_URL),
     });
 
@@ -146,6 +199,7 @@ export async function releaseFromEscrow(
 
     const walletClient = createWalletClient({
       account,
+      chain: customChain,
       transport: http(RPC_URL),
     });
 

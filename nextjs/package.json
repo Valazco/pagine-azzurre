@@ -2,6 +2,10 @@
   "name": "nextjs",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -24,7 +28,7 @@
     "lucide-react": "^0.552.0",
     "mailtrap": "^3.4.0",
     "mongoose": "^8.8.3",
-    "next": "16.0.1",
+    "next": "^16.1.6",
     "next-auth": "^4.24.10",
     "nodemailer": "^7.0.12",
     "react": "19.2.0",

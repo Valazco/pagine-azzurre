@@ -108,6 +108,10 @@ export default function VerificationLinkPage() {
               email: data.user.email,
               isAdmin: data.user.isAdmin || false,
               isSeller: data.user.isSeller || false,
+              account: data.user.account || '',
+              hasAd: data.user.hasAd || false,
+              token: data.user.token || '',
+              verified: true,
             });
           }
 
