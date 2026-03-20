@@ -5,7 +5,7 @@
   "description": "Ecommerce website like amazon",
   "main": "index.js",
   "scripts": {
-    "build": "cd nextjs && npm install --legacy-peer-deps && npm run build",
+    "build": "cd nextjs && npm run build",
     "start": "cd nextjs && npm start"
   },
   "repository": {
