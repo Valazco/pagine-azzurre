@@ -5,7 +5,8 @@ import data from '../data.js';
 import User from '../models/userModel.js';
 import Newsletter from '../models/newsletterModel.js';
 import dotenv from 'dotenv'
-import { generateToken, isAdmin, isAuth } from '../utils.js';
+import { generateToken, isAdmin, isAuth, isDevelopment } from '../utils.js';
+import { validateRegister, validateLogin, validateProfileUpdate } from '../middlewares/validators.js';
 import sgMail from "@sendgrid/mail"
 import Web3 from 'web3'
 // import HDWalletProvider from '@truffle/hdwallet-provider'
@@ -43,7 +44,9 @@ userRouter.get(
     const topSellers = await User.find({ isSeller: true })
       .sort({ 'seller.rating': -1 })
       .limit(3);
-    res.send(topSellers);
+    // Filter sensitive fields from all sellers
+    const sanitizedSellers = topSellers.map(seller => seller.toJSON());
+    res.send(sanitizedSellers);
   })
 );
 
@@ -51,12 +54,15 @@ userRouter.get(
   '/sellers',
   expressAsyncHandler(async (req, res) => {
     const sellers = await User.find({ isSeller: true })
-    res.send(sellers);
+    // Filter sensitive fields from all sellers
+    const sanitizedSellers = sellers.map(seller => seller.toJSON());
+    res.send(sanitizedSellers);
   })
 );
 
 userRouter.get(
   '/seed',
+  isDevelopment,
   expressAsyncHandler(async (req, res) => {
     // await User.remove({});
     const createdUsers = await User.insertMany(data.users);
@@ -66,6 +72,7 @@ userRouter.get(
 
 userRouter.post(
   '/signin',
+  validateLogin,
   expressAsyncHandler(async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (user) {
@@ -100,6 +107,7 @@ userRouter.post(
 
 userRouter.post(
   '/register',
+  validateRegister,
   expressAsyncHandler(async (req, res) => {
     let subscriber = false
     let createdUser
@@ -193,15 +201,15 @@ userRouter.post(
 userRouter.get(
   '/:id',
   expressAsyncHandler(async (req, res) => {
-    let userData = {}
     const user = await User.findById(req.params.id);
-    userData = {...user._doc}
     if (user) {
+      // Use toJSON to exclude sensitive fields (accountKey, password, etc.)
+      const userData = user.toJSON();
       const verifyNewsletter = await Newsletter.findOne({ email: user.email })
-      if(verifyNewsletter && verifyNewsletter.verified) { 
-        Object.assign( userData, { newsletter : "Verified" } )
+      if(verifyNewsletter && verifyNewsletter.verified) {
+        userData.newsletter = "Verified";
       } else {
-        Object.assign( userData, { newsletter : "Not Verified" } )
+        userData.newsletter = "Not Verified";
       }
       res.send(userData)
     } else {
@@ -213,6 +221,7 @@ userRouter.get(
 userRouter.put(
   '/profile',
   isAuth,
+  validateProfileUpdate,
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
     if (user) {
@@ -316,7 +325,9 @@ userRouter.get(
   isAdmin,
   expressAsyncHandler(async (req, res) => {
     const users = await User.find({});
-    res.send(users);
+    // Filter sensitive fields from all users
+    const sanitizedUsers = users.map(user => user.toJSON());
+    res.send(sanitizedUsers);
   })
 );
 
@@ -332,7 +343,7 @@ userRouter.delete(
         return;
       }
       const deleteUser = await user.remove();
-      res.send({ message: 'User Deleted', user: deleteUser });
+      res.send({ message: 'User Deleted', user: deleteUser.toJSON() });
     } else {
       res.status(404).send({ message: 'User Not Found' });
     }
@@ -353,7 +364,7 @@ userRouter.put(
       // TODO: Enable Admin
       // user.isAdmin = req.body.isAdmin || user.isAdmin;
       const updatedUser = await user.save();
-      res.send({ message: 'User Updated', user: updatedUser });
+      res.send({ message: 'User Updated', user: updatedUser.toJSON() });
     } else {
       res.status(404).send({ message: 'User Not Found' });
     }

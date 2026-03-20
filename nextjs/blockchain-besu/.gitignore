@@ -1,0 +1,13 @@
+# Besu data
+/data/
+
+# Build outputs
+contracts/out/
+contracts/cache/
+
+# Contract address (generated)
+contract-address.txt
+
+# Environment files
+.env
+.env.local

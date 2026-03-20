@@ -15,7 +15,12 @@ export default function WelcomeBanner(props) {
         Euro e più VAL ☯
       </h1>
       <h2 className="row center welcome">
-      Pagine Azzurre favorisce ogni scambio di prodotti, servizi e competenze finalizzati alla emancipazione umana, per mezzo delle convenzioni monetarie: EUR Euro. USD Dollaro Americano. RUR Rublo Russo. CAN Dollaro Canadese. CNY Yuan Cinese. INR Rupia Indiana. BRL Real Brasiliano. XDR Moneta Fondo Internazionale (IMF). AUD Dollaro Australiano. CRIPTO. Ma preferiamo: VAL, Crediti, G1, RISO e ne richiediamo almeno l'utilizzo parziale.
+        Pagine Azzurre favorisce ogni scambio di prodotti, servizi e competenze
+        finalizzati alla emancipazione umana, per mezzo delle convenzioni monetarie:
+        EUR Euro. USD Dollaro Americano. RUR Rublo Russo. CAN Dollaro Canadese.
+        CNY Yuan Cinese.  INR  Rupia Indiana. BRL Real Brasiliano.
+        XDR Moneta Fondo Internazionale (IMF).
+        AUD Dollaro Australiano. CRIPTO. Ma preferiamo: VAL, Crediti, G1, RISO e ne richiediamo almeno l'utilizzo parziale.
       </h2>
       <div>
         <i>PAGINEAZZURRE è una attività promossa e gestita dal Banco dei Cittadini Volontari del VAL.AZ.CO. (VALorizzatore AZioni COncordate) più semplicemente VAL, sito istituzionale: <a href="https://valazco.org">https://valazco.org</a></i>
@@ -36,6 +41,11 @@ export default function WelcomeBanner(props) {
         <div>
           <img className="Logo5 logo" src={logo5} alt="Logo" />
         </div>
+      </div>
+      <div className="row center welcome">Pagineazzurre è una attività promossa e gestita dal Banco dei Cittadini Volontari del Val.Az.Co.&nbsp;
+        <a href="http://valazco.org/scopri-pagine-azzurre.html" target="_blank" rel="noopener noreferrer">
+          http://valazco.org
+        </a>
       </div>
     </div>
   );

@@ -2,8 +2,8 @@ import express from 'express';
 import expressAsyncHandler from 'express-async-handler';
 import data from '../data.js';
 import Product from '../models/productModel.js';
-import { isAdmin, isAuth, isSellerOrAdmin } from '../utils.js';
-import { citiesList } from '../utils.js';
+import { isAdmin, isAuth, isSellerOrAdmin, isDevelopment, citiesList } from '../utils.js';
+import { validateProduct } from '../middlewares/validators.js';
 
 const productRouter = express.Router();
 
@@ -114,6 +114,7 @@ productRouter.get(
 
 productRouter.get(
   '/seed',
+  isDevelopment,
   expressAsyncHandler(async (req, res) => {
     // await Product.remove({});
     const seller = await User.findOne({ isSeller: true });
@@ -151,6 +152,7 @@ productRouter.post(
   '/',
   isAuth,
   isSellerOrAdmin,
+  validateProduct,
   expressAsyncHandler(async (req, res) => {
     const product = new Product({
       name: 'Annunciø n° ' + Date.now(),
@@ -168,6 +170,7 @@ productRouter.put(
   '/:id',
   isAuth,
   isSellerOrAdmin,
+  validateProduct,
   expressAsyncHandler(async (req, res) => {
     const productId = req.params.id;
     const product = await Product.findById(productId);
@@ -201,6 +204,7 @@ productRouter.put(
       product.section = req.body.section;
       product.isService = req.body.isService;
       product.pause = req.body.pause;
+      product.isGift = req.body.IsGift;
       product.auxPhone = req.body.auxPhone;
       product.delivery = req.body.delivery;
       product.expiry = req.body.expiry;

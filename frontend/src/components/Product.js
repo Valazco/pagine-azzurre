@@ -45,7 +45,7 @@ export default function Product({ product }) {
               numReviews={product.numReviews}
             ></Rating>
             {/* {(product.section !== "propongo" || product.section !== "avviso") && ( */}
-            {(product.section !== "propongo" && product.section !== "avviso") && (
+            {(product.section !== "propongo" && product.section !== "avviso" && product.section !== 'dono') && (
               <div className="card__price-container">
                 <div className="price euro">
                   €{" " + product.priceEuro}&nbsp;{" e"}

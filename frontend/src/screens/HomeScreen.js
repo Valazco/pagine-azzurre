@@ -113,6 +113,12 @@ export default function HomeScreen() {
           >
             Avvisi
           </button>
+          <button
+            className={section === "dono" ? "filter active" : "filter"}
+            onClick={() => setSection("dono")}
+          >
+            Dono/Tempo
+          </button>
         </div>
         {loading ? (
           <LoadingBox></LoadingBox>

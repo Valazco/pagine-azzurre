@@ -94,7 +94,7 @@ export default function Header({ setSidebarIsOpen }) {
               </Link>
               <ul className="dropdown-content">
                 <li>
-                  <Link to="/profile">Profilo</Link>
+                  <Link to="/profile">Personale</Link>
                 </li>
                 {userInfo && userInfo.verified && userInfo.isSeller && (
                   <>
@@ -105,16 +105,16 @@ export default function Header({ setSidebarIsOpen }) {
                       <Link to="/productlist/seller">Modifica Annuncio</Link>
                     </li>
                     <li>
-                      <Link to="/orderlist/seller">Ordini</Link>
+                      <Link to="/orderlist/seller">Attività</Link>
                     </li>
                     <li>
-                      <Link to="/orderhistory">Istoriale</Link>
+                      <Link to="/orderhistory">Storico</Link>
                     </li>
                   </>
                 )}
                 <li>
                   <Link to="#signout" onClick={signoutHandler}>
-                    Logout
+                    Esci
                   </Link>
                 </li>
               </ul>
@@ -155,7 +155,7 @@ export default function Header({ setSidebarIsOpen }) {
             valazco.it
           </a>
         }{" "}
-        per avere i VAL contributo di esistenza giornaliero da utilizzare subito
+        per avere i VAL contributo di emancipazione giornaliero da utilizzare subito
       </div> */}
     </>
   );

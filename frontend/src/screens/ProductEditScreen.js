@@ -31,6 +31,7 @@ export default function ProductEditScreen(props) {
   const [city, setCity] = useState("");
   const [municipality, setMunicipality] = useState("");
   const [image, setImage] = useState([]);
+  const [isGift, setIsGift]= useState("")
 
   // function parseDate(str, format, locale) {
   //   const parsed = dateFnsParse(str, format, new Date(), { locale });
@@ -91,6 +92,7 @@ export default function ProductEditScreen(props) {
       setCountry(product.country);
       setState(product.state);
       setCity(product.city);
+      setIsGift(product.isGift);
       setMunicipality(product.municipality);
     }
   }, [product, dispatch, productId, successUpdate, props.history]);
@@ -109,6 +111,7 @@ export default function ProductEditScreen(props) {
         description,
         section,
         isService,
+        isGift,
         pause,
         auxPhone,
         delivery,
@@ -183,10 +186,19 @@ export default function ProductEditScreen(props) {
       setSection("avviso");
       setImage(["/images/avviso.jpg"]);
     }
+    if (e === "dono") {
+      setSection("dono");
+      setImage(["/images/avviso.jpg"]);
+    }
     if (e === "offro" && isService) setImage(["/images/offro_servizio.jpg"]);
     if (e === "offro" && !isService) setImage(["/images/offro_prodotto.jpg"]);
     if (e === "cerco" && isService) setImage(["/images/cerco_servizio.jpg"]);
     if (e === "cerco" && !isService) setImage(["/images/cerco_prodotto.jpg"]);
+
+    /* dono */
+    if (e === 'dono' && isService) setImage(['/images/avviso.jpg']);
+    if (e === 'dono' && !isService) setImage(['/images/avviso.jpg']);
+    if (e === 'dono') setPriceVal(0)
   };
 
   const handleTitle = (e) => {
@@ -230,6 +242,7 @@ export default function ProductEditScreen(props) {
                 <option value="cerco">Cerco</option>
                 <option value="propongo">Proposte di idee e progetti</option>
                 <option value="avviso">Avviso</option>
+                <option value="dono">Dono</option>
               </select>
             </div>
             {section !== "avviso" && section !== "propongo" && (
@@ -279,7 +292,10 @@ export default function ProductEditScreen(props) {
                 required
               ></input>
             </div>
-            {section !== "avviso" && section !== "propongo" && (
+            {/* dono */}
+            {/* priceval in these cases should be 0*/}
+            {/* value={priceVal} */}
+            {section !== "avviso" && section !== "propongo" && section !== "dono" && (
               <>
                 <div>
                   <label htmlFor="priceVal">Prezzo in Val </label>
