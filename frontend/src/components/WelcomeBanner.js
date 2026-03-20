@@ -22,6 +22,9 @@ export default function WelcomeBanner(props) {
         XDR Moneta Fondo Internazionale (IMF).
         AUD Dollaro Australiano. CRIPTO. Ma preferiamo: VAL, Crediti, G1, RISO e ne richiediamo almeno l'utilizzo parziale.
       </h2>
+      <div>
+        <i>PAGINEAZZURRE è una attività promossa e gestita dal Banco dei Cittadini Volontari del VAL.AZ.CO. (VALorizzatore AZioni COncordate) più semplicemente VAL, sito istituzionale: <a href="https://valazco.org">https://valazco.org</a></i>
+      </div>
       <div className="logos-container">
         <div>
           <img className="Logo1 logo" src={logo1} alt="Logo" />
