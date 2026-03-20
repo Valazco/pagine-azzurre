@@ -5,8 +5,8 @@
   "description": "Ecommerce website like amazon",
   "main": "index.js",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build",
-    "start": "nodemon --watch backend --exec node --experimental-modules backend/server.js"
+    "build": "cd nextjs && npm install --legacy-peer-deps && npm run build",
+    "start": "cd nextjs && npm start"
   },
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
     "nodemon": "^2.0.4"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": "20.x",
     "npm": ">=10.0.0"
   }
 }
