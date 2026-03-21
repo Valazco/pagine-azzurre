@@ -1,20 +1,14 @@
-import { MailtrapClient } from 'mailtrap';
 import { getEtherealProvider, EtherealProvider } from './etherealProvider';
 
 // Email provider configuration
-const EMAIL_PROVIDER = process.env.EMAIL_PROVIDER || 'mailtrap'; // 'ethereal' | 'mailtrap'
+const EMAIL_PROVIDER = process.env.EMAIL_PROVIDER || 'mailersend';
 const SENDER_EMAIL = process.env.MAILTRAP_SENDER_EMAIL || 'noreply@pagineazzurre.it';
 const SENDER_NAME = process.env.MAILTRAP_SENDER_NAME || 'Pagine Azzurre';
 const APP_URL = process.env.NEXTAUTH_URL || 'https://pagineazzurre.it';
 
-// Mailtrap setup (for production)
-const TOKEN = process.env.MAILTRAP_API_KEY || '';
-const mailtrap = TOKEN ? new MailtrapClient({ token: TOKEN }) : null;
-
-const sender = {
-  email: SENDER_EMAIL,
-  name: SENDER_NAME,
-};
+// MailerSend API setup
+const MAILERSEND_TOKEN = process.env.MAILTRAP_API_KEY || '';
+const MAILERSEND_API_URL = 'https://api.mailersend.com/v1/email';
 
 // ============================================
 // MODERN EMAIL TEMPLATE SYSTEM
@@ -301,29 +295,32 @@ async function sendEmailWithProvider(
     return;
   }
 
-  // Use Mailtrap for production
-  if (!mailtrap) {
+  // Use MailerSend for production
+  if (!MAILERSEND_TOKEN) {
     console.log(`[MOCK EMAIL] To: ${to}`);
     console.log(`[MOCK EMAIL] Subject: ${subject}`);
     console.log(`[MOCK EMAIL] Body: ${text.substring(0, 100)}...`);
     return;
   }
 
-  if (templateUuid) {
-    await mailtrap.send({
-      from: sender,
-      to: [{ email: to }],
-      template_uuid: templateUuid,
-      template_variables: templateVariables,
-    });
-  } else {
-    await mailtrap.send({
-      from: sender,
+  const response = await fetch(MAILERSEND_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${MAILERSEND_TOKEN}`,
+    },
+    body: JSON.stringify({
+      from: { email: SENDER_EMAIL, name: SENDER_NAME },
       to: [{ email: to }],
       subject,
       html,
       text,
-    });
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`MailerSend error (${response.status}): ${error}`);
   }
 }
 

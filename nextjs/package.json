@@ -26,7 +26,6 @@
     "bcryptjs": "^2.4.3",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.552.0",
-    "mailtrap": "^3.4.0",
     "mongoose": "^8.8.3",
     "next": "^16.1.6",
     "next-auth": "^4.24.10",
