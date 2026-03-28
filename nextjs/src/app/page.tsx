@@ -40,7 +40,7 @@ export default function HomePage() {
       try {
         setLoading(true);
         setError(null);
-        const data = await getProducts({ pageNumber: page });
+        const data = await getProducts({ section, pageNumber: page });
         setProducts(data.products || []);
         setPages(data.pages || 1);
         setPage(data.page || 1);
@@ -54,14 +54,7 @@ export default function HomePage() {
     };
 
     fetchProducts();
-  }, [page]);
-
-  const filteredProducts = products.filter(
-    (product) =>
-      product.section === section &&
-      !product.pause &&
-      !product.name.match(/Annunciø/)
-  );
+  }, [page, section]);
 
   const sectionButtons: { value: Section; label: string }[] = [
     { value: 'offro', label: 'Offerte' },
@@ -93,7 +86,7 @@ export default function HomePage() {
           {sectionButtons.map((btn) => (
             <FilterButton
               key={btn.value}
-              onClick={() => setSection(btn.value)}
+              onClick={() => { setSection(btn.value); setPage(1); }}
               $isActive={section === btn.value}
             >
               {btn.label}
@@ -118,7 +111,7 @@ export default function HomePage() {
         {/* Products Grid */}
         {!loading && !error && (
           <>
-            {filteredProducts.length === 0 ? (
+            {products.length === 0 ? (
               <EmptyContainer>
                 <MessageBox variant="info">
                   Nessun prodotto trovato in questa sezione
@@ -126,14 +119,14 @@ export default function HomePage() {
               </EmptyContainer>
             ) : (
               <GridContainer style={{ marginBottom: '3rem' }}>
-                {filteredProducts.map((product) => (
+                {products.map((product) => (
                   <Product key={product._id} product={product} />
                 ))}
               </GridContainer>
             )}
 
             {/* Pagination */}
-            <Pagination currentPage={page} totalPages={pages} />
+            <Pagination currentPage={page} totalPages={pages} onPageChange={setPage} />
           </>
         )}
       </ContentContainer>
