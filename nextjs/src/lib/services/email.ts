@@ -1,14 +1,14 @@
 import { getEtherealProvider, EtherealProvider } from './etherealProvider';
 
 // Email provider configuration
-const EMAIL_PROVIDER = process.env.EMAIL_PROVIDER || 'mailersend';
-const SENDER_EMAIL = process.env.MAILTRAP_SENDER_EMAIL || 'noreply@pagineazzurre.it';
+const EMAIL_PROVIDER = process.env.EMAIL_PROVIDER || 'mailtrap';
+const SENDER_EMAIL = process.env.MAILTRAP_SENDER_EMAIL || 'noreply@pagineazzurre.net';
 const SENDER_NAME = process.env.MAILTRAP_SENDER_NAME || 'Pagine Azzurre';
 const APP_URL = process.env.NEXTAUTH_URL || 'https://pagineazzurre.it';
 
-// MailerSend API setup
-const MAILERSEND_TOKEN = process.env.MAILTRAP_API_KEY || '';
-const MAILERSEND_API_URL = 'https://api.mailersend.com/v1/email';
+// Mailtrap API setup
+const MAILTRAP_TOKEN = process.env.MAILTRAP_API_TOKEN || '';
+const MAILTRAP_API_URL = 'https://send.api.mailtrap.io/api/send';
 
 // ============================================
 // MODERN EMAIL TEMPLATE SYSTEM
@@ -230,7 +230,7 @@ function createEmailTemplate(content: string, preheader?: string): string {
             ">
               <p style="margin: 0 0 16px 0; color: ${colors.textSecondary}; font-size: 13px; line-height: 1.6;">
                 Questa email è stata inviata da Pagine Azzurre.<br>
-                Se hai domande, contattaci a <a href="mailto:support@pagineazzurre.it" style="color: ${colors.primary}; text-decoration: none;">support@pagineazzurre.it</a>
+                Se hai domande, contattaci a <a href="mailto:support@pagineazzurre.net" style="color: ${colors.primary}; text-decoration: none;">support@pagineazzurre.net</a>
               </p>
               <p style="margin: 0; color: ${colors.textMuted}; font-size: 12px;">
                 © ${new Date().getFullYear()} Pagine Azzurre. Tutti i diritti riservati.
@@ -295,19 +295,19 @@ async function sendEmailWithProvider(
     return;
   }
 
-  // Use MailerSend for production
-  if (!MAILERSEND_TOKEN) {
+  // Use Mailtrap for production
+  if (!MAILTRAP_TOKEN) {
     console.log(`[MOCK EMAIL] To: ${to}`);
     console.log(`[MOCK EMAIL] Subject: ${subject}`);
     console.log(`[MOCK EMAIL] Body: ${text.substring(0, 100)}...`);
     return;
   }
 
-  const response = await fetch(MAILERSEND_API_URL, {
+  const response = await fetch(MAILTRAP_API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${MAILERSEND_TOKEN}`,
+      'Authorization': `Bearer ${MAILTRAP_TOKEN}`,
     },
     body: JSON.stringify({
       from: { email: SENDER_EMAIL, name: SENDER_NAME },
@@ -320,7 +320,7 @@ async function sendEmailWithProvider(
 
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`MailerSend error (${response.status}): ${error}`);
+    throw new Error(`Mailtrap error (${response.status}): ${error}`);
   }
 }
 
@@ -522,7 +522,7 @@ export async function sendPasswordReplacedEmail(to: string, username: string) {
 
     ${emailDivider()}
 
-    ${emailInfoBox('Se non hai effettuato questa modifica, contattaci immediatamente a <a href="mailto:support@pagineazzurre.it" style="color: ' + colors.danger + ';">support@pagineazzurre.it</a>', 'danger')}
+    ${emailInfoBox('Se non hai effettuato questa modifica, contattaci immediatamente a <a href="mailto:support@pagineazzurre.net" style="color: ' + colors.danger + ';">support@pagineazzurre.net</a>', 'danger')}
   `;
 
   const html = createEmailTemplate(content, `${username}, la tua password è stata modificata`);

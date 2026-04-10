@@ -63,8 +63,8 @@ ADMIN_PRIVATE_KEY=tu-admin-private-key
 ENTROPY=random-string-for-wallet-generation
 
 # Email (Mailtrap)
-MAILTRAP_API_KEY=tu-api-key
-MAILTRAP_SENDER_EMAIL=noreply@pagineazzurre.it
+MAILTRAP_API_TOKEN=tu-api-token
+MAILTRAP_SENDER_EMAIL=noreply@pagineazzurre.net
 MAILTRAP_SENDER_NAME=Pagine Azzurre
 MAILTRAP_TEMPLATE_VERIFICATION=uuid
 MAILTRAP_TEMPLATE_WELCOME=uuid
