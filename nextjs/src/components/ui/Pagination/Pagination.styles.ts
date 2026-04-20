@@ -67,6 +67,48 @@ export const PageLink = styled(Link)<{ $isActive?: boolean }>`
         `}
 `;
 
+export const NavAction = styled.button`
+  ${baseButtonStyles}
+  background-color: white;
+  border: 2px solid #e5e7eb;
+  color: #374151;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #3b82f6;
+    color: #2563eb;
+  }
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+`;
+
+export const PageButton = styled.button<{ $isActive?: boolean }>`
+  ${baseButtonStyles}
+  cursor: pointer;
+
+  ${({ $isActive }) =>
+    $isActive
+      ? css`
+          background-color: #2563eb;
+          color: white;
+          border: none;
+          box-shadow: 0 10px 15px -3px rgb(59 130 246 / 0.3);
+        `
+      : css`
+          background-color: white;
+          color: #374151;
+          border: 2px solid #e5e7eb;
+
+          &:hover {
+            border-color: #3b82f6;
+            color: #2563eb;
+          }
+        `}
+`;
+
 export const Ellipsis = styled.span`
   ${baseButtonStyles}
   color: #9ca3af;

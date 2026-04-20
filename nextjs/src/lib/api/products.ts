@@ -4,6 +4,7 @@ import type { Product, ProductListResponse } from '@/types';
 export interface ProductFilters {
   name?: string;
   category?: string;
+  section?: string;
   min?: number;
   max?: number;
   rating?: number;
@@ -18,6 +19,7 @@ export async function getProducts(filters?: ProductFilters): Promise<ProductList
 
   if (filters?.name) params.append('name', filters.name);
   if (filters?.category) params.append('category', filters.category);
+  if (filters?.section) params.append('section', filters.section);
   if (filters?.min !== undefined) params.append('min', filters.min.toString());
   if (filters?.max !== undefined) params.append('max', filters.max.toString());
   if (filters?.rating) params.append('rating', filters.rating.toString());

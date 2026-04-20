@@ -11,11 +11,12 @@ export async function GET(request: NextRequest) {
     await connectDB();
 
     const searchParams = request.nextUrl.searchParams;
-    const pageSize = 100;
+    const pageSize = 12;
     const page = Number(searchParams.get('pageNumber')) || 1;
     const name = searchParams.get('name') || '';
     const category = searchParams.get('category') || '';
     const seller = searchParams.get('seller') || '';
+    const section = searchParams.get('section') || '';
     const order = searchParams.get('order') || '';
     const min = Number(searchParams.get('min')) || 0;
     const max = Number(searchParams.get('max')) || 0;
@@ -34,6 +35,7 @@ export async function GET(request: NextRequest) {
       : {};
 
     const sellerFilter = seller ? { seller } : {};
+    const sectionFilter = section ? { section } : {};
     const categoryFilter = category ? { category: category.toUpperCase() } : {};
     const priceFilter = min && max ? { priceVal: { $gte: min, $lte: max } } : {};
     const ratingFilter = rating ? { rating: { $gte: rating } } : {};
@@ -59,10 +61,12 @@ export async function GET(request: NextRequest) {
     // Build query
     const query = {
       ...sellerFilter,
+      ...sectionFilter,
       ...nameFilter,
       ...categoryFilter,
       ...priceFilter,
       ...ratingFilter,
+      pause: { $ne: true },
     };
 
     // Count total documents
